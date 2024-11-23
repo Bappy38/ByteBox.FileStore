@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ByteBox.FileStore.Domain\ByteBox.FileStore.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
