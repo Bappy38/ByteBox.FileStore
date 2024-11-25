@@ -14,12 +14,12 @@ public class FileConfiguration : IEntityTypeConfiguration<File>
 
         builder
             .HasOne(file => file.CreatedBy)
-            .WithOne()
-            .HasForeignKey<File>(folder => folder.CreatedByUserId);
+            .WithMany()
+            .HasForeignKey(file => file.CreatedByUserId);
 
         builder
             .HasOne(file => file.UpdatedBy)
-            .WithOne()
-            .HasForeignKey<File>(folder => folder.UpdatedByUserId);
+            .WithMany()
+            .HasForeignKey(file => file.UpdatedByUserId);
     }
 }

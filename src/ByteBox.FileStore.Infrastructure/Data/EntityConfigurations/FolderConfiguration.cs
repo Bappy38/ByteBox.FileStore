@@ -25,12 +25,12 @@ public class FolderConfiguration : IEntityTypeConfiguration<Folder>
 
         builder
             .HasOne(folder => folder.CreatedBy)
-            .WithOne()
-            .HasForeignKey<Folder>(folder => folder.CreatedByUserId);
+            .WithMany()
+            .HasForeignKey(folder => folder.CreatedByUserId);
 
         builder
             .HasOne(folder => folder.UpdatedBy)
-            .WithOne()
-            .HasForeignKey<Folder>(folder => folder.UpdatedByUserId);
+            .WithMany()
+            .HasForeignKey(folder => folder.UpdatedByUserId);
     }
 }

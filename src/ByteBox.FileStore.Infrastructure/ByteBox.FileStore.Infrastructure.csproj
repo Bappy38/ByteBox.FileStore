@@ -19,4 +19,9 @@
     <ProjectReference Include="..\ByteBox.FileStore.Domain\ByteBox.FileStore.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+    <Folder Include="Repositories\" />
+  </ItemGroup>
+
 </Project>
