@@ -14,9 +14,16 @@ public class FileConfiguration : IEntityTypeConfiguration<File>
             .HasKey(file => file.FileId);
 
         builder
+            .HasOne(file => file.Folder)
+            .WithMany()
+            .HasForeignKey(file => file.FolderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder
             .HasOne(file => file.CreatedBy)
             .WithMany()
-            .HasForeignKey(file => file.CreatedByUserId);
+            .HasForeignKey(file => file.CreatedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder
             .HasOne(file => file.UpdatedBy)

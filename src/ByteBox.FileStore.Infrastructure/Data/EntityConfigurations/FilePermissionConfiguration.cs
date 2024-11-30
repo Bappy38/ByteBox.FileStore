@@ -16,12 +16,14 @@ public class FilePermissionConfiguration : IEntityTypeConfiguration<FilePermissi
         builder
             .HasOne(fp => fp.File)
             .WithMany()
-            .HasForeignKey(fp => fp.FileId);
+            .HasForeignKey(fp => fp.FileId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder
             .HasOne(fp => fp.User)
             .WithMany()
-            .HasForeignKey(fp => fp.UserId);
+            .HasForeignKey(fp => fp.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder
             .HasOne(fp => fp.CreatedBy)

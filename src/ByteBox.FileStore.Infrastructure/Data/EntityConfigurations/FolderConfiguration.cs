@@ -16,18 +16,20 @@ public class FolderConfiguration : IEntityTypeConfiguration<Folder>
         builder
             .HasMany(folder => folder.Files)
             .WithOne(file => file.Folder)
-            .HasForeignKey(f => f.FolderId);
+            .HasForeignKey(file => file.FolderId);
 
         builder
             .HasMany(folder => folder.SubFolders)
             .WithOne(subFolder => subFolder.ParentFolder)
             .HasForeignKey(subFolder => subFolder.ParentFolderId)
-            .IsRequired(false);
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder
             .HasOne(folder => folder.CreatedBy)
             .WithMany()
-            .HasForeignKey(folder => folder.CreatedByUserId);
+            .HasForeignKey(folder => folder.CreatedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder
             .HasOne(folder => folder.UpdatedBy)
@@ -38,5 +40,9 @@ public class FolderConfiguration : IEntityTypeConfiguration<Folder>
         builder
             .Property(folder => folder.IsDeleted)
             .HasDefaultValue(false);
+
+        builder
+            .Property(folder => folder.FolderSizeInMb)
+            .HasDefaultValue(0.0);
     }
 }

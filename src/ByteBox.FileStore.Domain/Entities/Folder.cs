@@ -16,7 +16,7 @@ public class Folder : IAuditable, ISoftDeletable
 
     public DateTime CreatedAtUtc { get; set; }
     public Guid CreatedByUserId { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public DateTime UpdatedAtUtc { get; set; }
     public Guid UpdatedByUserId { get; set; }
     public User CreatedBy { get; set; }
     public User UpdatedBy { get; set; }

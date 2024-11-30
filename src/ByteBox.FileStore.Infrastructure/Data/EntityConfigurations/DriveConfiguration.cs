@@ -15,7 +15,8 @@ public class DriveConfiguration : IEntityTypeConfiguration<Drive>
         builder
             .HasOne(d => d.Owner)
             .WithOne()
-            .HasForeignKey<Drive>(d => d.OwnerId);
+            .HasForeignKey<Drive>(d => d.OwnerId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder
             .Property(d => d.IsDeleted)
