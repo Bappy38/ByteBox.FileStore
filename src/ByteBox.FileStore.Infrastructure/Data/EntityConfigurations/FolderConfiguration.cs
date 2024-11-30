@@ -32,7 +32,8 @@ public class FolderConfiguration : IEntityTypeConfiguration<Folder>
         builder
             .HasOne(folder => folder.UpdatedBy)
             .WithMany()
-            .HasForeignKey(folder => folder.UpdatedByUserId);
+            .HasForeignKey(folder => folder.UpdatedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder
             .Property(folder => folder.IsDeleted)

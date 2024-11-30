@@ -14,5 +14,6 @@ public class Drive : ISoftDeletable
 
     public Guid OwnerId { get; set; }
     public User Owner { get; set; }
+
     public bool IsDeleted { get; set; }
 }

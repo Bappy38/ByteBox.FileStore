@@ -21,7 +21,8 @@ public class FileConfiguration : IEntityTypeConfiguration<File>
         builder
             .HasOne(file => file.UpdatedBy)
             .WithMany()
-            .HasForeignKey(file => file.UpdatedByUserId);
+            .HasForeignKey(file => file.UpdatedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder
             .Property(file => file.IsDeleted)
