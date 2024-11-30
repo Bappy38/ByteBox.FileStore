@@ -32,5 +32,9 @@ public class FilePermissionConfiguration : IEntityTypeConfiguration<FilePermissi
             .HasOne(fp => fp.UpdatedBy)
             .WithMany()
             .HasForeignKey(fp => fp.UpdatedByUserId);
+
+        builder
+            .Property(fp => fp.IsDeleted)
+            .HasDefaultValue(false);
     }
 }

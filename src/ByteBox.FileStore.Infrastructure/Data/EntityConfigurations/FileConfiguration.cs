@@ -9,8 +9,9 @@ public class FileConfiguration : IEntityTypeConfiguration<File>
 {
     public void Configure(EntityTypeBuilder<File> builder)
     {
-        builder.ToTable(Tables.Files);
-        builder.HasKey(file => file.FileId);
+        builder
+            .ToTable(Tables.Files)
+            .HasKey(file => file.FileId);
 
         builder
             .HasOne(file => file.CreatedBy)
@@ -21,5 +22,9 @@ public class FileConfiguration : IEntityTypeConfiguration<File>
             .HasOne(file => file.UpdatedBy)
             .WithMany()
             .HasForeignKey(file => file.UpdatedByUserId);
+
+        builder
+            .Property(file => file.IsDeleted)
+            .HasDefaultValue(false);
     }
 }

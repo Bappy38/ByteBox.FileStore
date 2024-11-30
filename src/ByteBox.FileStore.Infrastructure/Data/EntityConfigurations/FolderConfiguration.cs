@@ -9,8 +9,9 @@ public class FolderConfiguration : IEntityTypeConfiguration<Folder>
 {
     public void Configure(EntityTypeBuilder<Folder> builder)
     {
-        builder.ToTable(Tables.Folders);
-        builder.HasKey(folder => folder.FolderId);
+        builder
+            .ToTable(Tables.Folders)
+            .HasKey(folder => folder.FolderId);
 
         builder
             .HasMany(folder => folder.Files)
@@ -32,5 +33,9 @@ public class FolderConfiguration : IEntityTypeConfiguration<Folder>
             .HasOne(folder => folder.UpdatedBy)
             .WithMany()
             .HasForeignKey(folder => folder.UpdatedByUserId);
+
+        builder
+            .Property(folder => folder.IsDeleted)
+            .HasDefaultValue(false);
     }
 }

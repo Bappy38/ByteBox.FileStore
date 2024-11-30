@@ -32,5 +32,9 @@ public class FolderPermissionConfiguration : IEntityTypeConfiguration<FolderPerm
             .HasOne(fp => fp.UpdatedBy)
             .WithMany()
             .HasForeignKey(fp => fp.UpdatedByUserId);
+
+        builder
+            .Property(fp => fp.IsDeleted)
+            .HasDefaultValue(false);
     }
 }

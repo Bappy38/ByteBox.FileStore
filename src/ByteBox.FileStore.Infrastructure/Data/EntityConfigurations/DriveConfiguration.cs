@@ -9,7 +9,16 @@ public class DriveConfiguration : IEntityTypeConfiguration<Drive>
 {
     public void Configure(EntityTypeBuilder<Drive> builder)
     {
-        builder.ToTable(Tables.Drives);
-        builder.HasKey(d => d.DriveId);
+        builder.ToTable(Tables.Drives)
+            .HasKey(d => d.DriveId);
+
+        builder
+            .HasOne(d => d.Owner)
+            .WithOne()
+            .HasForeignKey<Drive>(d => d.OwnerId);
+
+        builder
+            .Property(d => d.IsDeleted)
+            .HasDefaultValue(false);
     }
 }

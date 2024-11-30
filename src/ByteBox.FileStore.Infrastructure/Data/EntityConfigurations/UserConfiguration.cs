@@ -9,7 +9,12 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.ToTable(Tables.Users);
-        builder.HasKey(u => u.UserId);
+        builder
+            .ToTable(Tables.Users)
+            .HasKey(u => u.UserId);
+
+        builder
+            .Property(u => u.IsDeleted)
+            .HasDefaultValue(false);
     }
 }
