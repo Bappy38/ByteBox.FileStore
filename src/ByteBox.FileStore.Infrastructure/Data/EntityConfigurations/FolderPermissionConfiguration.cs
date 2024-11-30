@@ -26,12 +26,14 @@ public class FolderPermissionConfiguration : IEntityTypeConfiguration<FolderPerm
         builder
             .HasOne(fp => fp.CreatedBy)
             .WithMany()
-            .HasForeignKey(fp => fp.CreatedByUserId);
+            .HasForeignKey(fp => fp.CreatedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder
             .HasOne(fp => fp.UpdatedBy)
             .WithMany()
-            .HasForeignKey(fp => fp.UpdatedByUserId);
+            .HasForeignKey(fp => fp.UpdatedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder
             .Property(fp => fp.IsDeleted)
