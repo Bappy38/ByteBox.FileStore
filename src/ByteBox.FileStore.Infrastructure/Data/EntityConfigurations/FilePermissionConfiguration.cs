@@ -9,7 +9,9 @@ public class FilePermissionConfiguration : IEntityTypeConfiguration<FilePermissi
 {
     public void Configure(EntityTypeBuilder<FilePermission> builder)
     {
-        builder.ToTable(Tables.FilePermissions);
+        builder
+            .ToTable(Tables.FilePermissions)
+            .HasKey(fp => new { fp.FileId, fp.UserId });
 
         builder
             .HasOne(fp => fp.File)

@@ -9,7 +9,9 @@ public class FolderPermissionConfiguration : IEntityTypeConfiguration<FolderPerm
 {
     public void Configure(EntityTypeBuilder<FolderPermission> builder)
     {
-        builder.ToTable(Tables.FolderPermissions);
+        builder
+            .ToTable(Tables.FolderPermissions)
+            .HasKey(fp => new { fp.FolderId, fp.UserId });
 
         builder
             .HasOne(fp => fp.Folder)
