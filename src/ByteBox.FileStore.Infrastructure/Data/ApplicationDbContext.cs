@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ByteBox.FileStore.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace ByteBox.FileStore.Infrastructure.Data;
 
@@ -14,4 +15,9 @@ public sealed class ApplicationDbContext : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(infrastructureAssembly);
         base.OnModelCreating(modelBuilder);
     }
+
+    public DbSet<User> Users { get; set; }
+    public DbSet<Drive> Drives { get; set; }
+    public DbSet<Folder> Folders { get; set; }
+    public DbSet<FolderPermission> FolderPermissions { get; set; }
 }
