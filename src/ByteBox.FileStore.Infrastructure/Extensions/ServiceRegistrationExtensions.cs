@@ -1,5 +1,6 @@
 ﻿using ByteBox.FileStore.Domain.Repositories;
 using ByteBox.FileStore.Infrastructure.Data;
+using ByteBox.FileStore.Infrastructure.Data.Interceptors;
 using ByteBox.FileStore.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -20,9 +21,19 @@ public static class ServiceRegistrationExtensions
 
     private static IServiceCollection ConfigureDatabases(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddSingleton<SoftDeletableEntityInterceptor>();
+        services.AddSingleton<AuditableEntityInterceptor>();
+
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-        services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+        services.AddDbContext<ApplicationDbContext>((sp, options) => 
+            options
+            .UseSqlServer(connectionString)
+            .AddInterceptors(
+                sp.GetRequiredService<SoftDeletableEntityInterceptor>(),
+                sp.GetRequiredService<AuditableEntityInterceptor>()
+            )
+        );
 
         services.AddHealthChecks().AddSqlServer(connectionString!);
 
