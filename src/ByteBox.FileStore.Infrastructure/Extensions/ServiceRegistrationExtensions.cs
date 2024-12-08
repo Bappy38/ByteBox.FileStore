@@ -1,4 +1,6 @@
-﻿using ByteBox.FileStore.Infrastructure.Data;
+﻿using ByteBox.FileStore.Domain.Repositories;
+using ByteBox.FileStore.Infrastructure.Data;
+using ByteBox.FileStore.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +32,10 @@ public static class ServiceRegistrationExtensions
     private static IServiceCollection RegisterRepositories(this IServiceCollection services)
     {
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IDriveRepository, DriveRepository>();
+        services.AddScoped<IFolderRepository, FolderRepository>();
+        services.AddScoped<IFolderPermissionRepository, FolderPermissionRepository>();
         return services;
     }
 }
