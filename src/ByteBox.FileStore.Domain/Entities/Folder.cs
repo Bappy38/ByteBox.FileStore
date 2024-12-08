@@ -6,7 +6,7 @@ public class Folder : IAuditable, ISoftDeletable
 {
     public Guid FolderId { get; set; }
     public string FolderName { get; set; }
-    public double FolderSizeInMb { get; set; }
+    public double FolderSizeInMb { get; set; } = 0;
 
     public Guid? ParentFolderId { get; set; }
     public Folder? ParentFolder { get; set; }
@@ -16,10 +16,10 @@ public class Folder : IAuditable, ISoftDeletable
 
     public DateTime CreatedAtUtc { get; set; }
     public Guid CreatedByUserId { get; set; }
-    public DateTime UpdatedAtUtc { get; set; }
-    public Guid UpdatedByUserId { get; set; }
+    public DateTime? UpdatedAtUtc { get; set; }
+    public Guid? UpdatedByUserId { get; set; }
     public User CreatedBy { get; set; }
-    public User UpdatedBy { get; set; }
+    public User? UpdatedBy { get; set; }
 
     public bool IsDeleted { get; set; }
 }

@@ -10,7 +10,7 @@ public class Drive : ISoftDeletable
     public Guid DriveId { get; set; }
     public double PurchasedStorageInMb { get; set; }
     public double UsedStorageInMb { get; set; }
-    public DateTime NextBillDate { get; set; }
+    public DateTime? NextBillDate { get; set; }
 
     public Guid OwnerId { get; set; }
     public User Owner { get; set; }
