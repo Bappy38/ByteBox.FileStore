@@ -21,8 +21,8 @@ public static class ServiceRegistrationExtensions
 
     private static IServiceCollection ConfigureDatabases(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddSingleton<SoftDeletableEntityInterceptor>();
-        services.AddSingleton<AuditableEntityInterceptor>();
+        services.AddScoped<SoftDeletableEntityInterceptor>();
+        services.AddScoped<AuditableEntityInterceptor>();
 
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
