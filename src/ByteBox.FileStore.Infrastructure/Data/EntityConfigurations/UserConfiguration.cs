@@ -16,5 +16,25 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder
             .Property(u => u.IsDeleted)
             .HasDefaultValue(false);
+
+        builder
+            .Property(u => u.ProfilePictureUrl)
+            .HasDefaultValue(string.Empty);
+
+        builder
+            .HasData(GetSeedUsers());
+    }
+
+    private static List<User> GetSeedUsers()
+    {
+        return new List<User>
+        {
+            new User
+            {
+                UserId = DefaultUser.UserId,
+                UserName = DefaultUser.UserName,
+                Email = DefaultUser.Email
+            }
+        };
     }
 }
