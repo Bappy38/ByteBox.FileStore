@@ -30,10 +30,9 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Guid>
 
     public async Task<Guid> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        var existingUser = await _userRepository.GetByEmailAsync(request.Email);
-        if (existingUser is not null)
+        if (!await _userRepository.IsUniqueEmail(request.Email))
         {
-            throw new Exception($"User with email {request.Email} already exist");
+            throw new Exception($"User with email {request.Email} has already exist");
         }
 
         var user = new User
@@ -41,13 +40,13 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Guid>
             UserId = Guid.NewGuid(),
             UserName = request.UserName,
             Email = request.Email,
-            ProfilePictureUrl = request.ProfilePictureUrl
+            ProfilePictureUrl = request.ProfilePictureUrl ?? string.Empty
         };
         await _userRepository.AddAsync(user);
 
         var drive = new Drive
         {
-            DriveId = Guid.NewGuid(),
+            DriveId = user.UserId,
             PurchasedStorageInMb = 0,
             UsedStorageInMb = 0,
             NextBillDate = DateTime.Now,

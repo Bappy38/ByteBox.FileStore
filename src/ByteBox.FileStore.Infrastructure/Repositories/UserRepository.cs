@@ -19,9 +19,8 @@ public class UserRepository : IUserRepository
         await _dbContext.Users.AddAsync(user);
     }
 
-    public async Task<User?> GetByEmailAsync(string email)
+    public async Task<bool> IsUniqueEmail(string email)
     {
-        return await _dbContext.Users
-            .SingleOrDefaultAsync(u => u.Email == email);
+        return !await _dbContext.Users.AnyAsync(u => u.Email == email);
     }
 }

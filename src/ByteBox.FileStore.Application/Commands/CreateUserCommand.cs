@@ -2,8 +2,9 @@
 
 namespace ByteBox.FileStore.Application.Commands;
 
-public sealed record CreateUserCommand(
-    string UserName,
-    string Email,
-    string? ProfilePictureUrl
-) : ICommand<Guid>;
+public sealed record CreateUserCommand : ICommand<Guid>
+{
+    public string UserName { get; init; }
+    public string Email { get; init; }
+    public string ProfilePictureUrl { get; init; }
+}
