@@ -1,3 +1,4 @@
+using ByteBox.FileStore.API.Extensions;
 using ByteBox.FileStore.Application.Extensions;
 using ByteBox.FileStore.Infrastructure.Extensions;
 using HealthChecks.UI.Client;
@@ -12,19 +13,12 @@ builder.Services.AddControllers();
 
 builder.Services
     .AddApplication()
-    .AddInfrastructure(builder.Configuration);
+    .AddInfrastructure(builder.Configuration)
+    .AddPresentation();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-app.UseRouting();
+app.ConfigureRequestPipeline();
 
 app.MapControllers();
 
