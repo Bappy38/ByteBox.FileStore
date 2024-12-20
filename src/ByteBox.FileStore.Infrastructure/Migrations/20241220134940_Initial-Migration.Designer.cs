@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ByteBox.FileStore.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241208163813_NextBillDate prop of Drive entity and UpdatedAt, UpdatedBy prop of Auditable entity made optional")]
-    partial class NextBillDatepropofDriveentityandUpdatedAtUpdatedBypropofAuditableentitymadeoptional
+    [Migration("20241220134940_Initial-Migration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,6 +54,17 @@ namespace ByteBox.FileStore.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Drives", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            DriveId = new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"),
+                            IsDeleted = false,
+                            NextBillDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            OwnerId = new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"),
+                            PurchasedStorageInMb = 1024.0,
+                            UsedStorageInMb = 0.0
+                        });
                 });
 
             modelBuilder.Entity("ByteBox.FileStore.Domain.Entities.File", b =>
@@ -190,6 +201,17 @@ namespace ByteBox.FileStore.Infrastructure.Migrations
                     b.HasIndex("UpdatedByUserId");
 
                     b.ToTable("Folders", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            FolderId = new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"),
+                            CreatedAtUtc = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedByUserId = new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"),
+                            FolderName = "Root",
+                            FolderSizeInMb = 0.0,
+                            IsDeleted = false
+                        });
                 });
 
             modelBuilder.Entity("ByteBox.FileStore.Domain.Entities.FolderPermission", b =>
@@ -232,6 +254,18 @@ namespace ByteBox.FileStore.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("FolderPermissions", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            FolderId = new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"),
+                            UserId = new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"),
+                            AccessLevel = 2,
+                            CreatedAtUtc = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedByUserId = new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"),
+                            GrantedAtUtc = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false
+                        });
                 });
 
             modelBuilder.Entity("ByteBox.FileStore.Domain.Entities.User", b =>
@@ -251,7 +285,9 @@ namespace ByteBox.FileStore.Infrastructure.Migrations
 
                     b.Property<string>("ProfilePictureUrl")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("");
 
                     b.Property<string>("UserName")
                         .IsRequired()
@@ -260,6 +296,16 @@ namespace ByteBox.FileStore.Infrastructure.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"),
+                            Email = "default.user@bytebox.com",
+                            IsDeleted = false,
+                            ProfilePictureUrl = "",
+                            UserName = "Default User"
+                        });
                 });
 
             modelBuilder.Entity("ByteBox.FileStore.Domain.Entities.Drive", b =>

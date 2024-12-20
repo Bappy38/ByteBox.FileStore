@@ -11,8 +11,8 @@ public class Folder : IAuditable, ISoftDeletable
     public Guid? ParentFolderId { get; set; }
     public Folder? ParentFolder { get; set; }
 
-    public virtual ICollection<File> Files { get; set; }
-    public virtual ICollection<Folder> SubFolders { get; set; }
+    public virtual ICollection<File> Files { get; set; } = new List<File>();
+    public virtual ICollection<Folder> SubFolders { get; set; } = new List<Folder>();
 
     public DateTime CreatedAtUtc { get; set; }
     public Guid CreatedByUserId { get; set; }
@@ -21,5 +21,5 @@ public class Folder : IAuditable, ISoftDeletable
     public User CreatedBy { get; set; }
     public User? UpdatedBy { get; set; }
 
-    public bool IsDeleted { get; set; }
+    public bool IsDeleted { get; set; } = false;
 }

@@ -51,6 +51,17 @@ namespace ByteBox.FileStore.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Drives", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            DriveId = new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"),
+                            IsDeleted = false,
+                            NextBillDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            OwnerId = new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"),
+                            PurchasedStorageInMb = 1024.0,
+                            UsedStorageInMb = 0.0
+                        });
                 });
 
             modelBuilder.Entity("ByteBox.FileStore.Domain.Entities.File", b =>
@@ -187,6 +198,17 @@ namespace ByteBox.FileStore.Infrastructure.Migrations
                     b.HasIndex("UpdatedByUserId");
 
                     b.ToTable("Folders", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            FolderId = new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"),
+                            CreatedAtUtc = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedByUserId = new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"),
+                            FolderName = "Root",
+                            FolderSizeInMb = 0.0,
+                            IsDeleted = false
+                        });
                 });
 
             modelBuilder.Entity("ByteBox.FileStore.Domain.Entities.FolderPermission", b =>
@@ -229,6 +251,18 @@ namespace ByteBox.FileStore.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("FolderPermissions", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            FolderId = new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"),
+                            UserId = new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"),
+                            AccessLevel = 2,
+                            CreatedAtUtc = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedByUserId = new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"),
+                            GrantedAtUtc = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false
+                        });
                 });
 
             modelBuilder.Entity("ByteBox.FileStore.Domain.Entities.User", b =>

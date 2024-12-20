@@ -31,9 +31,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         {
             new User
             {
-                UserId = DefaultUser.UserId,
-                UserName = DefaultUser.UserName,
-                Email = DefaultUser.Email
+                UserId = Default.User.UserId,
+                UserName = Default.User.UserName,
+                Email = Default.User.Email
             }
         };
     }

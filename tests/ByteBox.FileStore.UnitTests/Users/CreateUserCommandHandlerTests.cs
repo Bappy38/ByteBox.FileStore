@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using ByteBox.FileStore.Application.Commands;
+﻿using ByteBox.FileStore.Application.Commands;
 using ByteBox.FileStore.Application.Commands.Handlers;
 using ByteBox.FileStore.Domain.Constants;
 using ByteBox.FileStore.Domain.Entities;
@@ -8,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ByteBox.FileStore.UnitTests.Users;
 
-public class CreateUserCommandHandlerTests : TestBase
+public sealed class CreateUserCommandHandlerTests : TestBase
 {
     private readonly CreateUserCommand Command = new CreateUserCommand
     {
@@ -21,15 +20,13 @@ public class CreateUserCommandHandlerTests : TestBase
     public CreateUserCommandHandlerTests()
     {
         _handler = new CreateUserCommandHandler(_userRepository, _driveRepository, _folderRepository, _folderPermissionRepository, _unitOfWork);
-
-        SeedUsers();
     }
 
     [Fact]
     public async Task Handle_ShouldReturnException_WhenEmailIsNotUnique()
     {
         // Arrange
-        var command = Command with { Email = DefaultUser.Email };
+        var command = Command with { Email = Default.User.Email };
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, default));
@@ -58,18 +55,5 @@ public class CreateUserCommandHandlerTests : TestBase
         var folderPermission = await _dbContext.FolderPermissions.FirstOrDefaultAsync(fp => fp.FolderId == createdFolder.FolderId && fp.UserId == createdUser.UserId);
         Assert.NotNull(folderPermission);
         Assert.Equal(AccessLevel.Owner, folderPermission.AccessLevel);
-    }
-
-    private void SeedUsers()
-    {
-        var user = new User
-        {
-            UserId = DefaultUser.UserId,
-            UserName = DefaultUser.UserName,
-            Email = DefaultUser.Email
-        };
-
-        _dbContext.Users.Add(user);
-        _dbContext.SaveChanges();
     }
 }
