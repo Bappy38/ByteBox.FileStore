@@ -11,6 +11,7 @@ public static class Default
 
     public static class Folder
     {
+        public static readonly Guid RootFolderId = Guid.Parse("9A18B0B3-C515-412D-BEF1-B609450DE4C9");
         public const string RootFolderName = "Root";
     }
 
