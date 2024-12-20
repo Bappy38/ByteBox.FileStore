@@ -56,7 +56,10 @@ public class FolderConfiguration : IEntityTypeConfiguration<Folder>
             new Folder
             {
                 FolderId = Default.User.UserId,
-                FolderName = Default.Folder.RootFolderName
+                FolderName = Default.Folder.RootFolderName,
+                CreatedAtUtc = Default.DateTime,
+                CreatedByUserId = Default.User.UserId,
+                IsDeleted = false
             }
         };
     }

@@ -55,7 +55,10 @@ public class FolderPermissionConfiguration : IEntityTypeConfiguration<FolderPerm
                 FolderId = Default.User.UserId,
                 UserId = Default.User.UserId,
                 AccessLevel = AccessLevel.Owner,
-                GrantedAtUtc = Default.NextBillDate
+                GrantedAtUtc = Default.DateTime,
+                CreatedAtUtc = Default.DateTime,
+                CreatedByUserId = Default.User.UserId,
+                IsDeleted = false
             }
         };
     }

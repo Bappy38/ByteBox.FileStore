@@ -14,5 +14,5 @@ public static class Default
         public const string RootFolderName = "Root";
     }
 
-    public static readonly DateTime NextBillDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+    public static readonly DateTime DateTime = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 }

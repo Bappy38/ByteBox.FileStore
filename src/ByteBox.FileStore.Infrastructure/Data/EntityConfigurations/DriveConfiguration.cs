@@ -35,8 +35,9 @@ public class DriveConfiguration : IEntityTypeConfiguration<Drive>
                 DriveId = Default.User.UserId,
                 PurchasedStorageInMb = 1024,
                 UsedStorageInMb = 0,
-                NextBillDate = Default.NextBillDate,
-                OwnerId = Default.User.UserId
+                NextBillDate = Default.DateTime,
+                OwnerId = Default.User.UserId,
+                IsDeleted = false
             }
         };
     }
