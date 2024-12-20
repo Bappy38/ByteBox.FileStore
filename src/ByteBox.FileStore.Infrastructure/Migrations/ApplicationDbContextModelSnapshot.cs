@@ -203,8 +203,8 @@ namespace ByteBox.FileStore.Infrastructure.Migrations
                         new
                         {
                             FolderId = new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"),
-                            CreatedAtUtc = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedByUserId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAtUtc = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedByUserId = new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"),
                             FolderName = "Root",
                             FolderSizeInMb = 0.0,
                             IsDeleted = false
@@ -258,8 +258,8 @@ namespace ByteBox.FileStore.Infrastructure.Migrations
                             FolderId = new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"),
                             UserId = new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"),
                             AccessLevel = 2,
-                            CreatedAtUtc = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedByUserId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAtUtc = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedByUserId = new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"),
                             GrantedAtUtc = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false
                         });

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ByteBox.FileStore.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class SchemadesignedforDriveFileFolderFilePermissionFolderPermissionandUsermodel : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,7 +18,7 @@ namespace ByteBox.FileStore.Infrastructure.Migrations
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProfilePictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProfilePictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: ""),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
@@ -33,7 +33,7 @@ namespace ByteBox.FileStore.Infrastructure.Migrations
                     DriveId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PurchasedStorageInMb = table.Column<double>(type: "float", nullable: false),
                     UsedStorageInMb = table.Column<double>(type: "float", nullable: false),
-                    NextBillDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    NextBillDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     OwnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
@@ -58,8 +58,8 @@ namespace ByteBox.FileStore.Infrastructure.Migrations
                     ParentFolderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UpdatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UpdatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
@@ -96,8 +96,8 @@ namespace ByteBox.FileStore.Infrastructure.Migrations
                     FolderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UpdatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UpdatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
@@ -133,8 +133,8 @@ namespace ByteBox.FileStore.Infrastructure.Migrations
                     GrantedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UpdatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UpdatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
@@ -176,8 +176,8 @@ namespace ByteBox.FileStore.Infrastructure.Migrations
                     GrantedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UpdatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
@@ -208,6 +208,26 @@ namespace ByteBox.FileStore.Infrastructure.Migrations
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "UserId", "Email", "ProfilePictureUrl", "UserName" },
+                values: new object[] { new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"), "default.user@bytebox.com", "", "Default User" });
+
+            migrationBuilder.InsertData(
+                table: "Drives",
+                columns: new[] { "DriveId", "NextBillDate", "OwnerId", "PurchasedStorageInMb", "UsedStorageInMb" },
+                values: new object[] { new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"), 1024.0, 0.0 });
+
+            migrationBuilder.InsertData(
+                table: "Folders",
+                columns: new[] { "FolderId", "CreatedAtUtc", "CreatedByUserId", "FolderName", "ParentFolderId", "UpdatedAtUtc", "UpdatedByUserId" },
+                values: new object[] { new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"), "Root", null, null, null });
+
+            migrationBuilder.InsertData(
+                table: "FolderPermissions",
+                columns: new[] { "FolderId", "UserId", "AccessLevel", "CreatedAtUtc", "CreatedByUserId", "GrantedAtUtc", "UpdatedAtUtc", "UpdatedByUserId" },
+                values: new object[] { new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"), new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"), 2, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("9a18b0b3-c515-412d-bef1-b609450de4c9"), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Drives_OwnerId",
