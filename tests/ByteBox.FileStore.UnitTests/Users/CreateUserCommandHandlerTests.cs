@@ -29,7 +29,7 @@ public class CreateUserCommandHandlerTests : TestBase
     public async Task Handle_ShouldReturnException_WhenEmailIsNotUnique()
     {
         // Arrange
-        var command = Command with { Email = DefaultUser.Email };
+        var command = Command with { Email = Default.User.Email };
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, default));
@@ -64,9 +64,9 @@ public class CreateUserCommandHandlerTests : TestBase
     {
         var user = new User
         {
-            UserId = DefaultUser.UserId,
-            UserName = DefaultUser.UserName,
-            Email = DefaultUser.Email
+            UserId = Default.User.UserId,
+            UserName = Default.User.UserName,
+            Email = Default.User.Email
         };
 
         _dbContext.Users.Add(user);

@@ -1,4 +1,5 @@
 ﻿using ByteBox.FileStore.Application.Abstraction;
+using ByteBox.FileStore.Domain.Constants;
 using ByteBox.FileStore.Domain.Entities;
 using ByteBox.FileStore.Domain.Enums;
 using ByteBox.FileStore.Domain.Repositories;
@@ -8,6 +9,9 @@ namespace ByteBox.FileStore.Application.Commands.Handlers;
 
 public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Guid>
 {
+    // TODO:: Will move this to configuration
+    private const int FreeStorageInMb = 1024;
+
     private readonly IUserRepository _userRepository;
     private readonly IDriveRepository _driveRepository;
     private readonly IFolderRepository _folderRepository;
@@ -47,9 +51,9 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Guid>
         var drive = new Drive
         {
             DriveId = user.UserId,
-            PurchasedStorageInMb = 0,
+            PurchasedStorageInMb = FreeStorageInMb,
             UsedStorageInMb = 0,
-            NextBillDate = DateTime.Now,
+            NextBillDate = DateTime.UtcNow,
             OwnerId = user.UserId
         };
         await _driveRepository.AddAsync(drive);
