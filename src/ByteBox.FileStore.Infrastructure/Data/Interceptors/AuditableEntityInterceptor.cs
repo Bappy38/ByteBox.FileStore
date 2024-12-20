@@ -31,7 +31,7 @@ public sealed class AuditableEntityInterceptor : SaveChangesInterceptor
     private static void UpdateAuditableEntries(DbContext context)
     {
         var currentDateTime = DateTime.UtcNow;
-        var currentUserId = DefaultUser.UserId;
+        var currentUserId = Default.User.UserId;
 
         var entries = context.ChangeTracker.Entries<IAuditable>().ToList();
 

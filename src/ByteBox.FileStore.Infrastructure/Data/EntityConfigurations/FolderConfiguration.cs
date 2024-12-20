@@ -44,5 +44,20 @@ public class FolderConfiguration : IEntityTypeConfiguration<Folder>
         builder
             .Property(folder => folder.FolderSizeInMb)
             .HasDefaultValue(0.0);
+
+        builder
+            .HasData(GetSeedFolders());
+    }
+
+    private static List<Folder> GetSeedFolders()
+    {
+        return new List<Folder>
+        {
+            new Folder
+            {
+                FolderId = Default.User.UserId,
+                FolderName = Default.Folder.RootFolderName
+            }
+        };
     }
 }

@@ -1,5 +1,6 @@
 ﻿using ByteBox.FileStore.Domain.Constants;
 using ByteBox.FileStore.Domain.Entities;
+using ByteBox.FileStore.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -40,5 +41,22 @@ public class FolderPermissionConfiguration : IEntityTypeConfiguration<FolderPerm
         builder
             .Property(fp => fp.IsDeleted)
             .HasDefaultValue(false);
+
+        builder
+            .HasData(GetSeedFolderPermission());
+    }
+
+    private static List<FolderPermission> GetSeedFolderPermission()
+    {
+        return new List<FolderPermission>
+        {
+            new FolderPermission
+            {
+                FolderId = Default.User.UserId,
+                UserId = Default.User.UserId,
+                AccessLevel = AccessLevel.Owner,
+                GrantedAtUtc = Default.NextBillDate
+            }
+        };
     }
 }

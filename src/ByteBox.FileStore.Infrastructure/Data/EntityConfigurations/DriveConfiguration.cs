@@ -21,5 +21,23 @@ public class DriveConfiguration : IEntityTypeConfiguration<Drive>
         builder
             .Property(d => d.IsDeleted)
             .HasDefaultValue(false);
+
+        builder
+            .HasData(GetSeedDrives());
+    }
+
+    private static List<Drive> GetSeedDrives()
+    {
+        return new List<Drive>
+        {
+            new Drive
+            {
+                DriveId = Default.User.UserId,
+                PurchasedStorageInMb = 1024,
+                UsedStorageInMb = 0,
+                NextBillDate = Default.NextBillDate,
+                OwnerId = Default.User.UserId
+            }
+        };
     }
 }
