@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ByteBox.FileStore.Domain.Utilities;
+using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ByteBox.FileStore.API.Middlewares;
 
@@ -16,6 +18,17 @@ public sealed class GlobalExceptionHandlingMiddleware : IMiddleware
         try
         {
             await next(context);
+        }
+        catch (ValidationException ex)
+        {
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            var validationErrors = ex.Errors.Select(e => new ValidationError
+            {
+                PropertyName = e.PropertyName,
+                Message = e.ErrorMessage
+            });
+
+            await context.Response.WriteAsJsonAsync(validationErrors);
         }
         catch (Exception ex)
         {
