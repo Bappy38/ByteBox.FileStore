@@ -1,4 +1,5 @@
-﻿using ByteBox.FileStore.Domain.Entities;
+﻿using ByteBox.FileStore.Domain.DTOs;
+using ByteBox.FileStore.Domain.Entities;
 using ByteBox.FileStore.Domain.Repositories;
 using ByteBox.FileStore.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,31 @@ public class FolderRepository : IFolderRepository
     public async Task AddAsync(Folder folder)
     {
         await _dbContext.Folders.AddAsync(folder);
+    }
+
+    public async Task<FolderDto?> GetFolderByIdAsync(Guid folderId)
+    {
+        return await _dbContext.Folders
+            .AsNoTracking()
+            .Where(f => f.FolderId == folderId)
+            .Select(f => new FolderDto
+            {
+                FolderId = f.FolderId,
+                FolderName = f.FolderName,
+                FolderSizeInMb = f.FolderSizeInMb,
+                Files = f.Files.Select(file => new FileDto
+                {
+                    FileId = file.FileId,
+                    FileName = file.FileName,
+                    FileSizeInMb = file.FileSizeInMb,
+                    FileType = file.FileType
+                }).ToList(),
+                SubFolders = f.SubFolders.Select(sf => new SubFolderDto
+                {
+                    FolderId = sf.FolderId,
+                    FolderName = sf.FolderName
+                }).ToList(),
+            }).FirstOrDefaultAsync();
     }
 
     public async Task<bool> IsUniqueFolderName(string folderName, Guid parentFolderId)
