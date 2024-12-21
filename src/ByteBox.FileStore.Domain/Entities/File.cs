@@ -4,6 +4,7 @@ namespace ByteBox.FileStore.Domain.Entities;
 
 // TODO: Whenever a user initiate file upload (requests for generating pre-signed url), we will check if the remaining storage is enough to upload the file he is trying to upload.
 // TODO: Whenever a file uploaded successfully, we will publish a FileUploadedEvent to update all of its anchestor folders size, propagate FolderPermission to that file
+// TODO: Whenever a file uploaded successfully, a lambda will be triggerred based on FileType to generate thumbnail of that file. Once lambda generate the thumbnail, it will upload it to the thumbnail folder (Under  User folder) in S3, also publish message to the queue to persist thumbnail URL in File entity.
 public class File : IAuditable, ISoftDeletable
 {
     public Guid FileId { get; set; }
