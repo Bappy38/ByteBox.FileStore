@@ -3,8 +3,10 @@ using Amazon.S3.Model;
 using ByteBox.FileStore.Application.Abstraction;
 using ByteBox.FileStore.Application.Extensions;
 using ByteBox.FileStore.Application.Responses;
+using ByteBox.FileStore.Domain.Constants;
 using ByteBox.FileStore.Domain.Repositories;
 using ByteBox.FileStore.Domain.Utilities;
+using ByteBox.FileStore.Infrastructure.Repositories;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -14,17 +16,20 @@ public class InitiateMultipartUploadCommandHandler : ICommandHandler<InitiateMul
 {
     private readonly IAmazonS3 _s3Client;
     private readonly S3Settings _s3Settings;
+    private readonly IDriveRepository _driveRepository;
     private readonly IFileRepository _fileRepository;
     private readonly ILogger<InitiateMultipartUploadCommandHandler> _logger;
 
     public InitiateMultipartUploadCommandHandler(
         IAmazonS3 s3Client,
         IOptions<S3Settings> s3Settings,
+        IDriveRepository driveRepository,
         IFileRepository fileRepository,
         ILogger<InitiateMultipartUploadCommandHandler> logger)
     {
         _s3Client = s3Client;
         _s3Settings = s3Settings.Value;
+        _driveRepository = driveRepository;
         _fileRepository = fileRepository;
         _logger = logger;
     }
@@ -33,7 +38,13 @@ public class InitiateMultipartUploadCommandHandler : ICommandHandler<InitiateMul
     {
         try
         {
-            if (await _fileRepository.IsUniqueFileName(request.FileName, request.FolderId))
+            var drive = await _driveRepository.GetByIdAsync(Default.User.UserId);   //TODO:: Replace with real user
+            if (!drive!.HaveSpace(request.FileSizeInMb))
+            {
+                throw new Exception("Storage limit exceed");
+            }
+
+            if (!await _fileRepository.IsUniqueFileName(request.FileName, request.FolderId))
             {
                 throw new Exception($"File with name '{request.FileName}' already exist");
             }

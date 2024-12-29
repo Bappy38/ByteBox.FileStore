@@ -25,4 +25,9 @@ public class Drive : ISoftDeletable
         }
         UsedStorageInMb += file.FileSizeInMb;
     }
+
+    public bool HaveSpace(double spaceInMb)
+    {
+        return UsedStorageInMb + spaceInMb <= PurchasedStorageInMb;
+    }
 }

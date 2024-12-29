@@ -47,6 +47,8 @@ public static class ServiceRegistrationExtensions
         services.AddScoped<IDriveRepository, DriveRepository>();
         services.AddScoped<IFolderRepository, FolderRepository>();
         services.AddScoped<IFolderPermissionRepository, FolderPermissionRepository>();
+        services.AddScoped<IFileRepository, FileRepository>();
+        services.AddScoped<IFilePermissionRepository, FilePermissionRepository>();
         return services;
     }
 }
