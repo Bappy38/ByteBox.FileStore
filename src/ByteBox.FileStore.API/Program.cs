@@ -28,7 +28,7 @@ builder.Services.AddSingleton<IAmazonS3>(sp =>
         RegionEndpoint = RegionEndpoint.GetBySystemName(s3Settings.Region)
     };
 
-    return new AmazonS3Client(config);
+    return new AmazonS3Client(s3Settings.AccessKey, s3Settings.SecretKey, config);
 });
 
 var app = builder.Build();
