@@ -63,6 +63,7 @@ public class CompleteMultipartUploadCommandHandler : ICommandHandler<CompleteMul
                 FileName = request.FileName,
                 FileSizeInMb = request.FileSizeInMb,
                 FileType = request.ContentType,
+                FileLocation = response.Location,
                 FolderId = request.FolderId
             };
             await _fileRepository.AddAsync(file);
