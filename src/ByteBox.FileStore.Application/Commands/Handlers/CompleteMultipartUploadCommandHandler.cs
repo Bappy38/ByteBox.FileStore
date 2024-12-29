@@ -17,6 +17,8 @@ namespace ByteBox.FileStore.Application.Commands.Handlers;
 
 public class CompleteMultipartUploadCommandHandler : ICommandHandler<CompleteMultipartUploadCommand, CompleteMultipartUploadCommandResponse>
 {
+    private const double FileSizeTolerance = 1.0;
+
     private readonly IAmazonS3 _s3Client;
     private readonly S3Settings _s3Settings;
     private readonly IDriveRepository _driveRepository;
@@ -47,15 +49,9 @@ public class CompleteMultipartUploadCommandHandler : ICommandHandler<CompleteMul
     {
         try
         {
-            var completeUploadRequest = new CompleteMultipartUploadRequest
-            {
-                BucketName = _s3Settings.BucketName,
-                Key = request.FileId.GenerateFileKey(),
-                UploadId = request.UploadId,
-                PartETags = request.Parts.Select(p => new PartETag(p.PartNumber, p.ETag)).ToList()
-            };
+            await ValidateFileSizeAsync(request);
 
-            var response = await _s3Client.CompleteMultipartUploadAsync(completeUploadRequest, cancellationToken);
+            var response = await CompleteMultipartUploadAsync(request, cancellationToken);
 
             var file = new File
             {
@@ -93,5 +89,36 @@ public class CompleteMultipartUploadCommandHandler : ICommandHandler<CompleteMul
             _logger.LogError(ex, "S3 error occurred while completing multipart upload: {ErrorMessage}", ex.Message);
             throw;
         }
+    }
+
+    private async Task ValidateFileSizeAsync(CompleteMultipartUploadCommand request)
+    {
+        var listPartsRequest = new ListPartsRequest
+        {
+            BucketName = _s3Settings.BucketName,
+            Key = request.FileId.GenerateFileKey(),
+            UploadId = request.UploadId
+        };
+        var response = await _s3Client.ListPartsAsync(listPartsRequest);
+
+        var uploadedFileSizeInByte = response.Parts.Sum(part => part.Size);
+        var uploadedFileSizeInMb = uploadedFileSizeInByte / (1024.0 * 1024.0);
+        if (Math.Abs(uploadedFileSizeInMb - request.FileSizeInMb) >= FileSizeTolerance)
+        {
+            throw new Exception("Upload Failed");
+        }
+    }
+
+    private async Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(CompleteMultipartUploadCommand request, CancellationToken ct)
+    {
+        var completeUploadRequest = new CompleteMultipartUploadRequest
+        {
+            BucketName = _s3Settings.BucketName,
+            Key = request.FileId.GenerateFileKey(),
+            UploadId = request.UploadId,
+            PartETags = request.Parts.Select(p => new PartETag(p.PartNumber, p.ETag)).ToList()
+        };
+
+        return await _s3Client.CompleteMultipartUploadAsync(completeUploadRequest, ct);
     }
 }
