@@ -16,4 +16,13 @@ public class Drive : ISoftDeletable
     public User Owner { get; set; }
 
     public bool IsDeleted { get; set; }
+
+    public void AddFile(File file)
+    {
+        if (UsedStorageInMb + file.FileSizeInMb > PurchasedStorageInMb)
+        {
+            throw new Exception("Storage limit exceed");
+        }
+        UsedStorageInMb += file.FileSizeInMb;
+    }
 }
