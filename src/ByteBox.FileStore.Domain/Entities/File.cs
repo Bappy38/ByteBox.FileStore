@@ -11,6 +11,7 @@ public class File : IAuditable, ISoftDeletable
     public string FileName { get; set; }
     public double FileSizeInMb { get; set; }
     public string FileType { get; set; }
+    public string FileLocation { get; set; }
     public Guid FolderId { get; set; }
     public Folder Folder { get; set; }
 
