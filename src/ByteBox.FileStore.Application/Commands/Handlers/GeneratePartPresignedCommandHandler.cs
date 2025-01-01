@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace ByteBox.FileStore.Application.Commands.Handlers;
 
-public class GeneratePartPresignedCommandHandler : ICommandHandler<GeneratePartPresignedCommand, GeneratePartPresignedCommandResponse>
+public class GeneratePartPresignedCommandHandler : ICommandHandler<GeneratePartPresignedCommand, GeneratePartPresignedResponse>
 {
     private readonly IAmazonS3 _s3Client;
     private readonly S3Settings _s3Settings;
@@ -25,7 +25,7 @@ public class GeneratePartPresignedCommandHandler : ICommandHandler<GeneratePartP
         _logger = logger;
     }
 
-    public async Task<GeneratePartPresignedCommandResponse> Handle(GeneratePartPresignedCommand request, CancellationToken cancellationToken)
+    public async Task<GeneratePartPresignedResponse> Handle(GeneratePartPresignedCommand request, CancellationToken cancellationToken)
     {
         try
         {
@@ -41,7 +41,7 @@ public class GeneratePartPresignedCommandHandler : ICommandHandler<GeneratePartP
 
             var preSignedUrl = await _s3Client.GetPreSignedURLAsync(getPreSignedUrlRequest);
 
-            return new GeneratePartPresignedCommandResponse
+            return new GeneratePartPresignedResponse
             {
                 FileId = request.FileId,
                 PreSignedUrl = preSignedUrl

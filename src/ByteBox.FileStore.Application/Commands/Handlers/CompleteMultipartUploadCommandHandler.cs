@@ -15,7 +15,7 @@ using File = ByteBox.FileStore.Domain.Entities.File;
 
 namespace ByteBox.FileStore.Application.Commands.Handlers;
 
-public class CompleteMultipartUploadCommandHandler : ICommandHandler<CompleteMultipartUploadCommand, CompleteMultipartUploadCommandResponse>
+public class CompleteMultipartUploadCommandHandler : ICommandHandler<CompleteMultipartUploadCommand, Responses.CompleteMultipartUploadResponse>
 {
     private const double FileSizeTolerance = 1.0;
 
@@ -45,7 +45,7 @@ public class CompleteMultipartUploadCommandHandler : ICommandHandler<CompleteMul
         _logger = logger;
     }
 
-    public async Task<CompleteMultipartUploadCommandResponse> Handle(CompleteMultipartUploadCommand request, CancellationToken cancellationToken)
+    public async Task<Responses.CompleteMultipartUploadResponse> Handle(CompleteMultipartUploadCommand request, CancellationToken cancellationToken)
     {
         try
         {
@@ -78,7 +78,7 @@ public class CompleteMultipartUploadCommandHandler : ICommandHandler<CompleteMul
 
             await _unitOfWork.SaveChangesAsync();
 
-            return new CompleteMultipartUploadCommandResponse
+            return new Responses.CompleteMultipartUploadResponse
             {
                 FileId = request.FileId,
                 Location = response.Location
@@ -109,7 +109,7 @@ public class CompleteMultipartUploadCommandHandler : ICommandHandler<CompleteMul
         }
     }
 
-    private async Task<CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(CompleteMultipartUploadCommand request, CancellationToken ct)
+    private async Task<Amazon.S3.Model.CompleteMultipartUploadResponse> CompleteMultipartUploadAsync(CompleteMultipartUploadCommand request, CancellationToken ct)
     {
         var completeUploadRequest = new CompleteMultipartUploadRequest
         {

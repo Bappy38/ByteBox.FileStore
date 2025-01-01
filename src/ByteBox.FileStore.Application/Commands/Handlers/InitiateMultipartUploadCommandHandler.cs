@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace ByteBox.FileStore.Application.Commands.Handlers;
 
-public class InitiateMultipartUploadCommandHandler : ICommandHandler<InitiateMultipartUploadCommand, InitiateMultipartUploadCommandResponse>
+public class InitiateMultipartUploadCommandHandler : ICommandHandler<InitiateMultipartUploadCommand, Responses.InitiateMultipartUploadResponse>
 {
     private readonly IAmazonS3 _s3Client;
     private readonly S3Settings _s3Settings;
@@ -34,7 +34,7 @@ public class InitiateMultipartUploadCommandHandler : ICommandHandler<InitiateMul
         _logger = logger;
     }
 
-    public async Task<InitiateMultipartUploadCommandResponse> Handle(InitiateMultipartUploadCommand request, CancellationToken cancellationToken)
+    public async Task<Responses.InitiateMultipartUploadResponse> Handle(InitiateMultipartUploadCommand request, CancellationToken cancellationToken)
     {
         try
         {
@@ -63,7 +63,7 @@ public class InitiateMultipartUploadCommandHandler : ICommandHandler<InitiateMul
             };
 
             var response = await _s3Client.InitiateMultipartUploadAsync(uploadRequest);
-            return new InitiateMultipartUploadCommandResponse
+            return new Responses.InitiateMultipartUploadResponse
             {
                 FileId = fileId,
                 UploadId = response.UploadId

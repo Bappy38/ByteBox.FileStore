@@ -3,7 +3,7 @@ using ByteBox.FileStore.Application.Responses;
 
 namespace ByteBox.FileStore.Application.Commands;
 
-public sealed record InitiateMultipartUploadCommand : ICommand<InitiateMultipartUploadCommandResponse>
+public sealed record InitiateMultipartUploadCommand : ICommand<InitiateMultipartUploadResponse>
 {
     public Guid FolderId { get; set; }
     public double FileSizeInMb { get; set; }
