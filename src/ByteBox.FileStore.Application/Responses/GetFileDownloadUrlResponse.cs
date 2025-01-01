@@ -1,7 +1,7 @@
 ﻿namespace ByteBox.FileStore.Application.Responses;
 
-public record InitiateMultipartUploadCommandResponse
+public record GetFileDownloadUrlResponse
 {
     public Guid FileId { get; set; }
-    public string UploadId { get; set; }
+    public string DownloadUrl { get; set; }
 }

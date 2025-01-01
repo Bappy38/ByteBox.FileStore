@@ -3,7 +3,7 @@ using ByteBox.FileStore.Application.Responses;
 
 namespace ByteBox.FileStore.Application.Commands;
 
-public class CompleteMultipartUploadCommand : ICommand<CompleteMultipartUploadCommandResponse>
+public class CompleteMultipartUploadCommand : ICommand<CompleteMultipartUploadResponse>
 {
     public Guid FileId { get; init; }
     public string FileName { get; init; }
