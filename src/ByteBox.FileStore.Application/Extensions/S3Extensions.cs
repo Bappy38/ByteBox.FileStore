@@ -6,6 +6,6 @@ public static class S3Extensions
 {
     public static string GenerateFileKey(this Guid fileId)
     {
-        return $"{Default.User.UserId}/resources/{fileId}";
+        return $"resources/{Default.User.UserId}/{fileId}";
     }
 }
