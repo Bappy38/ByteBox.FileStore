@@ -1,1 +1,3 @@
 - Use "Deploy to Amazon ECS" CD worklow.
+- Implement a lambda to generate thumbnails
+	- Set Dead Letter Queue to queue failed event.
