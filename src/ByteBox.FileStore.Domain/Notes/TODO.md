@@ -1,1 +1,3 @@
+- S3 Bucket Pattern Should be `resources/images/{UserId}/`, `resources/videos/{UserId}/`, `thumbnails/images/{UserId}/` so that in thumbnail generator lambdas we can match path prefix according to lambda role. ImageThumbnailGenerator lambda will be trigerred by `resources/images/{UserId}/` prefix. Need to fix GenerateFileKey extension method. GenerateFileKey extension will determine the path based on file content type.
+- 
 - Use "Deploy to Amazon ECS" CD worklow.
