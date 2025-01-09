@@ -40,5 +40,8 @@ public class FilePermissionConfiguration : IEntityTypeConfiguration<FilePermissi
         builder
             .Property(fp => fp.IsDeleted)
             .HasDefaultValue(false);
+
+        builder
+            .HasQueryFilter(fp => !fp.IsDeleted);
     }
 }

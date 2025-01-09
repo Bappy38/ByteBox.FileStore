@@ -1,5 +1,7 @@
 ﻿using ByteBox.FileStore.API.Middlewares;
+using ByteBox.FileStore.Domain.BackgroundJobs;
 using ByteBox.FileStore.Domain.Utilities;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ByteBox.FileStore.API.Extensions;
@@ -38,6 +40,8 @@ public static class ServiceRegistrationExtensions
 
     public static WebApplication ConfigureRequestPipeline(this WebApplication app)
     {
+        app.UseBackgroundJobs();
+
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
@@ -48,6 +52,15 @@ public static class ServiceRegistrationExtensions
         app.UseRouting();
 
         app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+
+        return app;
+    }
+
+    private static WebApplication UseBackgroundJobs(this WebApplication app)
+    {
+        app.Services
+            .GetRequiredService<IRecurringJobManager>()
+            .AddOrUpdate<IDeleteTrashFilesJob>("DeleteTrashFilesJob", job => job.ExecuteAsync(), app.Configuration["BackgroundJobs:DeleteTrashFilesJob:Schedule"]);
 
         return app;
     }
