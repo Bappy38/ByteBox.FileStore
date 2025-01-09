@@ -34,5 +34,8 @@ public class FileConfiguration : IEntityTypeConfiguration<File>
         builder
             .Property(file => file.IsDeleted)
             .HasDefaultValue(false);
+
+        builder
+            .HasQueryFilter(file => !file.IsDeleted);
     }
 }

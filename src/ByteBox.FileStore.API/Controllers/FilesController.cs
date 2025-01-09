@@ -44,4 +44,15 @@ public class FilesController : ControllerBase
         var response = await _mediator.Send(query);
         return Ok(response);
     }
+
+    [HttpDelete("{fileId:guid}")]
+    public async Task<IActionResult> DeleteFile(Guid fileId)
+    {
+        var command = new DeleteFileCommand
+        {
+            FileId = fileId
+        };
+        await _mediator.Send(command);
+        return Ok();
+    }
 }
