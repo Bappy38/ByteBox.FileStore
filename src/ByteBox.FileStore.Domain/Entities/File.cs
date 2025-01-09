@@ -22,5 +22,16 @@ public class File : IAuditable, ISoftDeletable
     public User CreatedBy { get; set; }
     public User? UpdatedBy { get; set; }
 
+    public DateTime? TrashedAt { get; set; } = null;
     public bool IsDeleted { get; set; }
+
+    public void MoveToTrash()
+    {
+        TrashedAt = DateTime.UtcNow;
+    }
+
+    public void RestoreFromTrash()
+    {
+        TrashedAt = null;
+    }
 }

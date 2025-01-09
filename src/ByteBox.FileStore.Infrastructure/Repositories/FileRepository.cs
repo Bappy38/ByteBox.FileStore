@@ -19,6 +19,18 @@ public class FileRepository : IFileRepository
         await _dbContext.Files.AddAsync(file);
     }
 
+    public async Task<File?> GetByIdAsync(Guid id)
+    {
+        return await _dbContext.Files
+            .Where(f => f.TrashedAt == null)
+            .FirstOrDefaultAsync(f => f.FileId == id);
+    }
+
+    public async Task UpdateAsync(File file)
+    {
+        _dbContext.Files.Update(file);
+    }
+
     public async Task<bool> IsUniqueFileName(string fileName, Guid folderId)
     {
         return !await _dbContext.Files.AnyAsync(f => f.FolderId == folderId && f.FileName == fileName);
