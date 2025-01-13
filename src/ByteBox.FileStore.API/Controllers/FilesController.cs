@@ -66,4 +66,12 @@ public class FilesController : ControllerBase
         await _mediator.Send(command);
         return NoContent();
     }
+
+    [HttpDelete("{fileId:guid}/PermanentDelete")]
+    public async Task<IActionResult> PermanentDelete(Guid fileId)
+    {
+        var command = new PermanentDeleteFileCommand { FileId = fileId };
+        await _mediator.Send(command);
+        return NoContent();
+    }
 }

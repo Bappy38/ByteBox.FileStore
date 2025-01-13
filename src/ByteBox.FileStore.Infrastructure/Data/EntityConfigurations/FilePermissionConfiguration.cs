@@ -17,7 +17,7 @@ public class FilePermissionConfiguration : IEntityTypeConfiguration<FilePermissi
             .HasOne(fp => fp.File)
             .WithMany()
             .HasForeignKey(fp => fp.FileId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder
             .HasOne(fp => fp.User)
