@@ -55,4 +55,15 @@ public class FilesController : ControllerBase
         await _mediator.Send(command);
         return Ok();
     }
+
+    [HttpPost("{fileId:guid}/Restore")]
+    public async Task<IActionResult> RestoreFile(Guid fileId)
+    {
+        var command = new RestoreFileCommand
+        {
+            FileId = fileId
+        };
+        await _mediator.Send(command);
+        return NoContent();
+    }
 }

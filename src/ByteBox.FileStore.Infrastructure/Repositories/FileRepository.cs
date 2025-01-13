@@ -26,6 +26,13 @@ public class FileRepository : IFileRepository
             .FirstOrDefaultAsync(f => f.FileId == id);
     }
 
+    public async Task<File?> GetTrashedFileByIdAsync(Guid id)
+    {
+        return await _dbContext.Files
+            .Where(f => f.TrashedAt != null)
+            .FirstOrDefaultAsync(f => f.FileId == id);
+    }
+
     public async Task UpdateAsync(File file)
     {
         _dbContext.Files.Update(file);
