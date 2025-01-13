@@ -30,7 +30,7 @@ public class FolderRepository : IFolderRepository
                 FolderId = f.FolderId,
                 FolderName = f.FolderName,
                 FolderSizeInMb = f.FolderSizeInMb,
-                Files = f.Files.Select(file => new FileDto
+                Files = f.Files.Where(f => f.TrashedAt == null).Select(file => new FileDto
                 {
                     FileId = file.FileId,
                     FileName = file.FileName,
