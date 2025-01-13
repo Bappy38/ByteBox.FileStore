@@ -38,6 +38,11 @@ public class FileRepository : IFileRepository
         _dbContext.Files.Update(file);
     }
 
+    public async Task RemoveAsync(File file)
+    {
+        _dbContext.Files.Remove(file);
+    }
+
     public async Task<bool> IsUniqueFileName(string fileName, Guid folderId)
     {
         return !await _dbContext.Files.AnyAsync(f => f.FolderId == folderId && f.FileName == fileName);
