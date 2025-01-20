@@ -1,5 +1,6 @@
 ﻿using ByteBox.FileStore.API.Middlewares;
 using ByteBox.FileStore.Domain.BackgroundJobs;
+using ByteBox.FileStore.Domain.Constants;
 using ByteBox.FileStore.Domain.Utilities;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc;
@@ -8,9 +9,10 @@ namespace ByteBox.FileStore.API.Extensions;
 
 public static class ServiceRegistrationExtensions
 {
-    public static IServiceCollection AddPresentation(this IServiceCollection services)
+    public static IServiceCollection AddPresentation(this IServiceCollection services, IConfiguration configuration)
     {
         services
+            .ConfigureCorsPolicy(configuration)
             .AddControllers()
             .ConfigureApiBehaviorOptions(options =>
             {
@@ -38,6 +40,23 @@ public static class ServiceRegistrationExtensions
         return services;
     }
 
+    private static IServiceCollection ConfigureCorsPolicy(this IServiceCollection services, IConfiguration config)
+    {
+        var allowedOrigins = config.GetValue<string>(ConfigKey.AllowedOrigins);
+
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowSpecificOrigin", builder =>
+            {
+                builder.WithOrigins(allowedOrigins!.Split(','))
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
+
+        return services;
+    }
+
     public static WebApplication ConfigureRequestPipeline(this WebApplication app)
     {
         app.UseBackgroundJobs();
@@ -47,6 +66,8 @@ public static class ServiceRegistrationExtensions
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+
+        app.UseCors("AllowSpecificOrigin");
 
         app.UseHttpsRedirection();
         app.UseRouting();
@@ -60,7 +81,7 @@ public static class ServiceRegistrationExtensions
     {
         app.Services
             .GetRequiredService<IRecurringJobManager>()
-            .AddOrUpdate<IDeleteTrashFilesJob>("DeleteTrashFilesJob", job => job.ExecuteAsync(), app.Configuration["BackgroundJobs:DeleteTrashFilesJob:Schedule"]);
+            .AddOrUpdate<IDeleteTrashFilesJob>("DeleteTrashFilesJob", job => job.ExecuteAsync(), app.Configuration[ConfigKey.DeleteTrashFilesJobSchedule]);
 
         return app;
     }
