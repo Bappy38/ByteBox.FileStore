@@ -47,7 +47,7 @@ public class CreateFolderCommandHandler : ICommandHandler<CreateFolderCommand, G
             FolderId = Guid.NewGuid(),
             FolderName = request.FolderName,
             ParentFolderId = request.ParentFolderId,
-            AncestorIds = $"{parentFolder.AncestorIds}|{parentFolder.FolderId}"
+            AncestorIds = string.IsNullOrEmpty(parentFolder.AncestorIds)? parentFolder.FolderId.ToString() : $"{parentFolder.AncestorIds}|{parentFolder.FolderId}"
         };
         await _folderRepository.AddAsync(folder);
 

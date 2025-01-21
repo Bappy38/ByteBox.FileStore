@@ -43,6 +43,9 @@ public class FolderPermissionConfiguration : IEntityTypeConfiguration<FolderPerm
             .HasDefaultValue(false);
 
         builder
+            .HasQueryFilter(fp => !fp.IsDeleted);
+
+        builder
             .HasData(GetSeedFolderPermission());
     }
 
