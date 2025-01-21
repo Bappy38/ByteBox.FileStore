@@ -8,5 +8,6 @@ public interface IFolderRepository
     // INFO:: Follow CRUD order
     Task AddAsync(Folder folder);
     Task<FolderDto?> GetFolderByIdAsync(Guid folderId);
+    Task<FolderPathDto?> GetFolderPathByIdAsync(Guid folderId);
     Task<bool> IsUniqueFolderName(string folderName, Guid parentFolderId);
 }
