@@ -9,5 +9,6 @@ public interface IFolderRepository
     Task AddAsync(Folder folder);
     Task<FolderDto?> GetFolderByIdAsync(Guid folderId);
     Task<FolderPathDto?> GetFolderPathByIdAsync(Guid folderId);
+    Task<List<FolderPathDto>> GetFoldersPathByIdsAsync(List<Guid> folderIds);
     Task<bool> IsUniqueFolderName(string folderName, Guid parentFolderId);
 }
