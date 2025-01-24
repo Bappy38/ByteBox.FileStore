@@ -11,6 +11,8 @@ public class Folder : IAuditable, ISoftDeletable
     public Guid? ParentFolderId { get; set; }
     public Folder? ParentFolder { get; set; }
 
+    public string AncestorIds { get; set; } = string.Empty;
+
     public virtual ICollection<File> Files { get; set; } = new List<File>();
     public virtual ICollection<Folder> SubFolders { get; set; } = new List<Folder>();
 

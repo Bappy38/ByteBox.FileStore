@@ -46,6 +46,9 @@ public class FolderConfiguration : IEntityTypeConfiguration<Folder>
             .HasDefaultValue(0.0);
 
         builder
+            .HasQueryFilter(folder => !folder.IsDeleted);
+
+        builder
             .HasData(GetSeedFolders());
     }
 

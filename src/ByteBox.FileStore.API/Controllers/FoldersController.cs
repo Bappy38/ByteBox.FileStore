@@ -33,4 +33,15 @@ public class FoldersController : ControllerBase
         var result = await _mediator.Send(query);
         return Ok(result);
     }
+
+    [HttpGet("{folderId:guid}/Breadcrumbs")]
+    public async Task<IActionResult> GetBreadcrumbs(Guid folderId)
+    {
+        var query = new GetBreadcrumbsQuery
+        {
+            FolderId = folderId
+        };
+        var breadcrumbs = await _mediator.Send(query);
+        return Ok(breadcrumbs);
+    }
 }

@@ -4,6 +4,8 @@ using ByteBox.FileStore.Domain.Constants;
 using ByteBox.FileStore.Domain.Entities;
 using ByteBox.FileStore.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace ByteBox.FileStore.UnitTests.Folders;
 
@@ -19,7 +21,7 @@ public sealed class CreateFolderCommandHandlerTests : TestBase
 
     public CreateFolderCommandHandlerTests()
     {
-        _handler = new CreateFolderCommandHandler(_folderRepository, _folderPermissionRepository, _unitOfWork);
+        _handler = new CreateFolderCommandHandler(_folderRepository, _folderPermissionRepository, _unitOfWork, Mock.Of<ILogger<CreateFolderCommandHandler>>());
         SeedData();
     }
 

@@ -45,6 +45,32 @@ public class FolderRepository : IFolderRepository
             }).FirstOrDefaultAsync();
     }
 
+    public async Task<FolderPathDto?> GetFolderPathByIdAsync(Guid folderId)
+    {
+        return await _dbContext.Folders
+            .AsNoTracking()
+            .Where(f => f.FolderId == folderId)
+            .Select(f => new FolderPathDto
+            {
+                FolderId = f.FolderId,
+                FolderName = f.FolderName,
+                AncestorIds = f.AncestorIds
+            }).FirstOrDefaultAsync();
+    }
+
+    public async Task<List<FolderPathDto>> GetFoldersPathByIdsAsync(List<Guid> folderIds)
+    {
+        return await _dbContext.Folders
+            .AsNoTracking()
+            .Where(f => folderIds.Contains(f.FolderId))
+            .Select(f => new FolderPathDto
+            {
+                FolderId = f.FolderId,
+                FolderName = f.FolderName,
+                AncestorIds = f.AncestorIds
+            }).ToListAsync();
+    }
+
     public async Task<bool> IsUniqueFolderName(string folderName, Guid parentFolderId)
     {
         return !await _dbContext.Folders.AnyAsync(f => f.ParentFolderId == parentFolderId && f.FolderName == folderName);

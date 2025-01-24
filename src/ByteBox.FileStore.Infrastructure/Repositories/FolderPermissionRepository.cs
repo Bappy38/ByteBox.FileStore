@@ -1,4 +1,5 @@
-﻿using ByteBox.FileStore.Domain.Entities;
+﻿using ByteBox.FileStore.Domain.DTOs;
+using ByteBox.FileStore.Domain.Entities;
 using ByteBox.FileStore.Domain.Repositories;
 using ByteBox.FileStore.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -19,8 +20,23 @@ public class FolderPermissionRepository : IFolderPermissionRepository
         await _dbContext.FolderPermissions.AddAsync(folderPermission);
     }
 
+    public async Task<List<FolderPermissionDto>> GetFolderPermissionsAsync(Guid userId, List<Guid> folderIds)
+    {
+        return await _dbContext.FolderPermissions
+            .AsNoTracking()
+            .Where(fp => fp.UserId == userId && folderIds.Contains(fp.FolderId))
+            .Select(fp => new FolderPermissionDto
+            {
+                FolderId = fp.FolderId,
+                UserId = fp.UserId,
+                AccessLevel = fp.AccessLevel,
+                GrantedAtUtc = fp.GrantedAtUtc
+            })
+            .ToListAsync();
+    }
+
     public async Task<bool> HasPermission(Guid userId, Guid folderId)
     {
-        return await _dbContext.FolderPermissions.AnyAsync(fp => !fp.IsDeleted && fp.UserId == userId && fp.FolderId == folderId);
+        return await _dbContext.FolderPermissions.AnyAsync(fp => fp.UserId == userId && fp.FolderId == folderId);
     }
 }
