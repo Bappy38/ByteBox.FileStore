@@ -34,7 +34,7 @@ public class FilesController : ControllerBase
     public async Task<IActionResult> CompleteMultipartUpload([FromBody] CompleteMultipartUploadCommand command)
     {
         var response = await _mediator.Send(command);
-        return Ok(response);
+        return StatusCode(StatusCodes.Status201Created, response);
     }
 
     [HttpGet("{fileId:guid}")]
