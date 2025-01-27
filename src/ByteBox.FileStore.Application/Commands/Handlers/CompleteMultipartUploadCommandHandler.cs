@@ -2,7 +2,6 @@
 using Amazon.S3.Model;
 using ByteBox.FileStore.Application.Abstraction;
 using ByteBox.FileStore.Application.Extensions;
-using ByteBox.FileStore.Application.Responses;
 using ByteBox.FileStore.Domain.Constants;
 using ByteBox.FileStore.Domain.Entities;
 using ByteBox.FileStore.Domain.Enums;
@@ -11,6 +10,7 @@ using ByteBox.FileStore.Domain.Utilities;
 using ByteBox.FileStore.Infrastructure.Data;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using CompleteMultipartUploadResponse = ByteBox.FileStore.Application.Responses.CompleteMultipartUploadResponse;
 using File = ByteBox.FileStore.Domain.Entities.File;
 
 namespace ByteBox.FileStore.Application.Commands.Handlers;
@@ -45,7 +45,7 @@ public class CompleteMultipartUploadCommandHandler : ICommandHandler<CompleteMul
         _logger = logger;
     }
 
-    public async Task<Responses.CompleteMultipartUploadResponse> Handle(CompleteMultipartUploadCommand request, CancellationToken cancellationToken)
+    public async Task<CompleteMultipartUploadResponse> Handle(CompleteMultipartUploadCommand request, CancellationToken cancellationToken)
     {
         try
         {
@@ -78,10 +78,13 @@ public class CompleteMultipartUploadCommandHandler : ICommandHandler<CompleteMul
 
             await _unitOfWork.SaveChangesAsync();
 
-            return new Responses.CompleteMultipartUploadResponse
+            return new CompleteMultipartUploadResponse
             {
                 FileId = request.FileId,
-                Location = response.Location
+                FileName = file.FileName,
+                FileSizeInMb = file.FileSizeInMb,
+                FileType = file.FileType,
+                ThumbnailUrl = string.Empty // TODO:: Replace with default thumbnailUrl until real thumbnail generated
             };
         }
         catch (AmazonS3Exception ex)

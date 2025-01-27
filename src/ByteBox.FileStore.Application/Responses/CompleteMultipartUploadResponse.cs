@@ -2,6 +2,9 @@
 
 public record CompleteMultipartUploadResponse
 {
-    public Guid FileId { get; set; }
-    public string Location { get; set; }
+    public Guid FileId { get; init; }
+    public string FileName { get; init; }
+    public double FileSizeInMb { get; init; }
+    public string FileType { get; init; }
+    public string ThumbnailUrl { get; init; }
 }
