@@ -11,7 +11,6 @@ using ByteBox.FileStore.Infrastructure.Data;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using CompleteMultipartUploadResponse = ByteBox.FileStore.Application.Responses.CompleteMultipartUploadResponse;
-using File = ByteBox.FileStore.Domain.Entities.File;
 
 namespace ByteBox.FileStore.Application.Commands.Handlers;
 
@@ -49,20 +48,19 @@ public class CompleteMultipartUploadCommandHandler : ICommandHandler<CompleteMul
     {
         try
         {
-            await ValidateFileSizeAsync(request);
+            var file = await _fileRepository.GetByIdAsync(request.FileId);
 
+            if (file == null)
+            {
+                throw new Exception("Upload failed");
+            }
+
+            await ValidateFileSizeAsync(request);
             var response = await CompleteMultipartUploadAsync(request, cancellationToken);
 
-            var file = new File
-            {
-                FileId = request.FileId,
-                FileName = request.FileName,
-                FileSizeInMb = request.FileSizeInMb,
-                FileType = request.ContentType,
-                FileLocation = response.Location,
-                FolderId = request.FolderId
-            };
-            await _fileRepository.AddAsync(file);
+            file.IsUploadCompleted = true;
+            file.FileLocation = response.Location;
+            await _fileRepository.UpdateAsync(file);
 
             var filePermission = new FilePermission
             {
