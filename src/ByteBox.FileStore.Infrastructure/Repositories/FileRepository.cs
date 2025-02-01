@@ -45,6 +45,8 @@ public class FileRepository : IFileRepository
 
     public async Task<bool> IsUniqueFileName(string fileName, Guid folderId)
     {
-        return !await _dbContext.Files.AnyAsync(f => f.FolderId == folderId && f.FileName == fileName);
+        return !await _dbContext.Files
+            .Where(f => f.FolderId == folderId && f.TrashedAt == null && f.IsUploadCompleted && f.FileName == fileName)
+            .AnyAsync();
     }
 }

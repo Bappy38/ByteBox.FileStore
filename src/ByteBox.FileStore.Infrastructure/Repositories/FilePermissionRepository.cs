@@ -1,4 +1,5 @@
-﻿using ByteBox.FileStore.Domain.Entities;
+﻿using ByteBox.FileStore.Domain.DTOs;
+using ByteBox.FileStore.Domain.Entities;
 using ByteBox.FileStore.Domain.Repositories;
 using ByteBox.FileStore.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -19,8 +20,16 @@ public class FilePermissionRepository : IFilePermissionRepository
         await _dbContext.FilePermissions.AddAsync(file);
     }
 
-    public async Task<FilePermission?> GetAsync(Guid fileId, Guid userId)
+    public async Task<FilePermissionDto?> GetAsync(Guid fileId, Guid userId)
     {
-        return await _dbContext.FilePermissions.FirstOrDefaultAsync(fp => fp.FileId == fileId && fp.UserId == userId);
+        return await _dbContext.FilePermissions
+            .Where(fp => fp.FileId == fileId && fp.UserId == userId)
+            .Select(fp => new FilePermissionDto
+            {
+                FileId = fp.FileId,
+                UserId = fp.UserId,
+                AccessLevel = fp.AccessLevel,
+                GrantedAtUtc = fp.GrantedAtUtc
+            }).FirstOrDefaultAsync();
     }
 }
