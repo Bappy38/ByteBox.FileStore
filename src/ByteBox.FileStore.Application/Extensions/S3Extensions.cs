@@ -8,4 +8,9 @@ public static class S3Extensions
     {
         return $"{Default.User.UserId}/resources/{fileId}";
     }
+
+    public static string GenerateThumbnailKey(this Guid fileId)
+    {
+        return $"{Default.User.UserId}/thumbnails/{fileId}";
+    }
 }

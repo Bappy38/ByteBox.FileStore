@@ -2,13 +2,13 @@
 using Amazon.S3.Model;
 using ByteBox.FileStore.Application.Abstraction;
 using ByteBox.FileStore.Application.Extensions;
-using ByteBox.FileStore.Application.Responses;
 using ByteBox.FileStore.Domain.Constants;
 using ByteBox.FileStore.Domain.Repositories;
 using ByteBox.FileStore.Domain.Utilities;
-using ByteBox.FileStore.Infrastructure.Repositories;
+using ByteBox.FileStore.Infrastructure.Data;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using File = ByteBox.FileStore.Domain.Entities.File;
 
 namespace ByteBox.FileStore.Application.Commands.Handlers;
 
@@ -18,6 +18,7 @@ public class InitiateMultipartUploadCommandHandler : ICommandHandler<InitiateMul
     private readonly S3Settings _s3Settings;
     private readonly IDriveRepository _driveRepository;
     private readonly IFileRepository _fileRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<InitiateMultipartUploadCommandHandler> _logger;
 
     public InitiateMultipartUploadCommandHandler(
@@ -25,12 +26,14 @@ public class InitiateMultipartUploadCommandHandler : ICommandHandler<InitiateMul
         IOptions<S3Settings> s3Settings,
         IDriveRepository driveRepository,
         IFileRepository fileRepository,
+        IUnitOfWork unitOfWork,
         ILogger<InitiateMultipartUploadCommandHandler> logger)
     {
         _s3Client = s3Client;
         _s3Settings = s3Settings.Value;
         _driveRepository = driveRepository;
         _fileRepository = fileRepository;
+        _unitOfWork = unitOfWork;
         _logger = logger;
     }
 
@@ -50,6 +53,8 @@ public class InitiateMultipartUploadCommandHandler : ICommandHandler<InitiateMul
             }
 
             var fileId = Guid.NewGuid();
+            var versionId = Guid.NewGuid();
+
             var uploadRequest = new InitiateMultipartUploadRequest
             {
                 BucketName = _s3Settings.BucketName,
@@ -58,11 +63,27 @@ public class InitiateMultipartUploadCommandHandler : ICommandHandler<InitiateMul
                 Metadata =
                 {
                     ["file-name"] = request.FileName,
-                    ["folder-id"] = request.FolderId.ToString()
+                    ["folder-id"] = request.FolderId.ToString(),
+                    ["version-id"] = versionId.ToString()
                 }
             };
 
             var response = await _s3Client.InitiateMultipartUploadAsync(uploadRequest);
+
+            var file = new File
+            {
+                FileId = fileId,
+                FileName = request.FileName,
+                FileSizeInMb = request.FileSizeInMb,
+                FileType = request.ContentType,
+                FileLocation = string.Empty,
+                VersionId = versionId,
+                IsUploadCompleted = false,
+                FolderId = request.FolderId
+            };
+            await _fileRepository.AddAsync(file);
+            await _unitOfWork.SaveChangesAsync();
+
             return new Responses.InitiateMultipartUploadResponse
             {
                 FileId = fileId,

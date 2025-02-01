@@ -11,7 +11,14 @@ public class File : IAuditable, ISoftDeletable
     public string FileName { get; set; }
     public double FileSizeInMb { get; set; }
     public string FileType { get; set; }
-    public string FileLocation { get; set; }
+    public string FileLocation { get; set; } = string.Empty;
+    public string ThumbnailPresignedUrl { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Adding unique VersionId as file meta-data each time any modification (e.g. FileName, FolderId, FilePermission) happens to the file to invalidate already generated pre-signedUrl.
+    /// </summary>
+    public Guid VersionId { get; set; }
+    public bool IsUploadCompleted { get; set; } = false;
     public Guid FolderId { get; set; }
     public Folder Folder { get; set; }
 
