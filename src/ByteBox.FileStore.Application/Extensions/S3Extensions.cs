@@ -1,5 +1,4 @@
 ﻿using ByteBox.FileStore.Domain.Constants;
-using ByteBox.FileStore.Domain.Entities;
 using File = ByteBox.FileStore.Domain.Entities.File;
 
 namespace ByteBox.FileStore.Application.Extensions;
@@ -20,6 +19,13 @@ public static class S3Extensions
 
     public static string GetThumbnailLocation(this File file)
     {
-        return file.FileLocation.Replace("resources", "thumbnails");
+        var actualFileType = FileMimeTypes.GetActualFileType(file.FileType);
+
+        if (actualFileType == FileTypes.Unsupported)
+        {
+            throw new Exception("Unsupported file format");
+        }
+
+        return $"thumbnails/{actualFileType}/{Default.User.UserId}/{file.FileId}";
     }
 }
