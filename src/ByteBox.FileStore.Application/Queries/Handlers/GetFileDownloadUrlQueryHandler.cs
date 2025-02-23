@@ -15,17 +15,20 @@ public class GetFileDownloadUrlQueryHandler : IQueryHandler<GetFileDownloadUrlQu
 {
     private readonly IAmazonS3 _s3Client;
     private readonly S3Settings _s3Settings;
+    private readonly IFileRepository _fileRepository;
     private readonly IFilePermissionRepository _filePermissionRepository;
     private ILogger<GetFileDownloadUrlQueryHandler> _logger;
 
     public GetFileDownloadUrlQueryHandler(
         IAmazonS3 s3Client,
         IOptions<S3Settings> s3Settings,
+        IFileRepository fileRepository,
         IFilePermissionRepository filePermissionRepository,
         ILogger<GetFileDownloadUrlQueryHandler> logger)
     {
         _s3Client = s3Client;
         _s3Settings = s3Settings.Value;
+        _fileRepository = fileRepository;
         _filePermissionRepository = filePermissionRepository;
         _logger = logger;
     }
@@ -35,8 +38,13 @@ public class GetFileDownloadUrlQueryHandler : IQueryHandler<GetFileDownloadUrlQu
         try
         {
             var filePermission = await _filePermissionRepository.GetAsync(request.FileId, Default.User.UserId); // TODO:: Will replace with real UserId;
-
             if (filePermission is null)
+            {
+                throw new Exception("File not found");
+            }
+
+            var file = await _fileRepository.GetByIdAsync(request.FileId);
+            if (file is null)
             {
                 throw new Exception("File not found");
             }
@@ -44,7 +52,7 @@ public class GetFileDownloadUrlQueryHandler : IQueryHandler<GetFileDownloadUrlQu
             var getPreSignedUrlRequest = new GetPreSignedUrlRequest
             {
                 BucketName = _s3Settings.BucketName,
-                Key = request.FileId.GenerateFileKey(),
+                Key = request.FileId.GenerateFileKey(file.FileType),
                 Verb = HttpVerb.GET,
                 Expires = DateTime.UtcNow.AddMinutes(15)    // TODO:: Will read it from config
             };

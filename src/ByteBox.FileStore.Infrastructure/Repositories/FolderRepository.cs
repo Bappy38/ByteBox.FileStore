@@ -35,7 +35,8 @@ public class FolderRepository : IFolderRepository
                     FileId = file.FileId,
                     FileName = file.FileName,
                     FileSizeInMb = file.FileSizeInMb,
-                    FileType = file.FileType
+                    FileType = file.FileType,
+                    ThumbnailUrl = file.ThumbnailPresignedUrl
                 }).ToList(),
                 SubFolders = f.SubFolders.Select(sf => new SubFolderDto
                 {

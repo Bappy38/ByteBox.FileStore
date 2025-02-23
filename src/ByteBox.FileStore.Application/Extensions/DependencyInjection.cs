@@ -1,14 +1,18 @@
 ﻿using ByteBox.FileStore.Application.BackgroundJobs;
+using ByteBox.FileStore.Application.MessageHandlers;
 using ByteBox.FileStore.Domain.BackgroundJobs;
+using ByteBox.FileStore.Infrastructure.Messages;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NexaWrap.SQS.NET.Extensions;
 
 namespace ByteBox.FileStore.Application.Extensions;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddApplication(this IServiceCollection services)
+    public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
         var applicationAssembly = typeof(DependencyInjection).Assembly;
 
@@ -21,6 +25,8 @@ public static class DependencyInjection
 
         services.AddBackgroundJobs();
 
+        services.AddMessageHandlers(configuration);
+
         return services;
     }
 
@@ -28,6 +34,15 @@ public static class DependencyInjection
     {
         services.AddScoped<IDeleteTrashFilesJob, DeleteTrashFilesJob>();
 
+        return services;
+    }
+
+    private static IServiceCollection AddMessageHandlers(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.ConfigureSqs(configuration, sqsBuilder =>
+        {
+            sqsBuilder.RegisterHandler<ThumbnailGeneratedMessage, ThumbnailGeneratedMessageHandler>();
+        });
         return services;
     }
 }

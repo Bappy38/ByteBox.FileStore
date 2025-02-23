@@ -97,7 +97,7 @@ public class CompleteMultipartUploadCommandHandler : ICommandHandler<CompleteMul
         var listPartsRequest = new ListPartsRequest
         {
             BucketName = _s3Settings.BucketName,
-            Key = request.FileId.GenerateFileKey(),
+            Key = request.FileId.GenerateFileKey(request.ContentType),
             UploadId = request.UploadId
         };
         var response = await _s3Client.ListPartsAsync(listPartsRequest);
@@ -115,7 +115,7 @@ public class CompleteMultipartUploadCommandHandler : ICommandHandler<CompleteMul
         var completeUploadRequest = new CompleteMultipartUploadRequest
         {
             BucketName = _s3Settings.BucketName,
-            Key = request.FileId.GenerateFileKey(),
+            Key = request.FileId.GenerateFileKey(request.ContentType),
             UploadId = request.UploadId,
             PartETags = request.Parts.Select(p => new PartETag(p.PartNumber, p.ETag)).ToList()
         };

@@ -24,6 +24,7 @@ public class FilePermissionRepository : IFilePermissionRepository
     {
         return await _dbContext.FilePermissions
             .Where(fp => fp.FileId == fileId && fp.UserId == userId)
+            .Include(fp => fp.File)
             .Select(fp => new FilePermissionDto
             {
                 FileId = fp.FileId,

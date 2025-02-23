@@ -1,16 +1,31 @@
 ﻿using ByteBox.FileStore.Domain.Constants;
+using File = ByteBox.FileStore.Domain.Entities.File;
 
 namespace ByteBox.FileStore.Application.Extensions;
 
 public static class S3Extensions
 {
-    public static string GenerateFileKey(this Guid fileId)
+    public static string GenerateFileKey(this Guid fileId, string mimeType)
     {
-        return $"{Default.User.UserId}/resources/{fileId}";
+        var actualFileType = FileMimeTypes.GetActualFileType(mimeType);
+
+        if (actualFileType == FileTypes.Unsupported)
+        {
+            throw new Exception("Unsupported file format");
+        }
+
+        return $"resources/{actualFileType}/{Default.User.UserId}/{fileId}";
     }
 
-    public static string GenerateThumbnailKey(this Guid fileId)
+    public static string GetThumbnailLocation(this File file)
     {
-        return $"{Default.User.UserId}/thumbnails/{fileId}";
+        var actualFileType = FileMimeTypes.GetActualFileType(file.FileType);
+
+        if (actualFileType == FileTypes.Unsupported)
+        {
+            throw new Exception("Unsupported file format");
+        }
+
+        return $"thumbnails/{actualFileType}/{Default.User.UserId}/{file.FileId}";
     }
 }

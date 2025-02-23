@@ -58,12 +58,12 @@ public class InitiateMultipartUploadCommandHandler : ICommandHandler<InitiateMul
             var uploadRequest = new InitiateMultipartUploadRequest
             {
                 BucketName = _s3Settings.BucketName,
-                Key = fileId.GenerateFileKey(),
+                Key = fileId.GenerateFileKey(request.ContentType),
                 ContentType = request.ContentType,
                 Metadata =
                 {
+                    ["file-id"] = fileId.ToString(),
                     ["file-name"] = request.FileName,
-                    ["folder-id"] = request.FolderId.ToString(),
                     ["version-id"] = versionId.ToString()
                 }
             };
