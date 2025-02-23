@@ -32,7 +32,7 @@ public class GeneratePartPresignedCommandHandler : ICommandHandler<GeneratePartP
             var getPreSignedUrlRequest = new GetPreSignedUrlRequest
             {
                 BucketName = _s3Settings.BucketName,
-                Key = request.FileId.GenerateFileKey(),
+                Key = request.FileId.GenerateFileKey(request.ContentType),
                 Verb = HttpVerb.PUT,
                 Expires = DateTime.UtcNow.AddMinutes(15),   // TODO:: Will read it from config
                 UploadId = request.UploadId,

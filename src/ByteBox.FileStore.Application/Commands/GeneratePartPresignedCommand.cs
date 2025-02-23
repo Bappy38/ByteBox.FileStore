@@ -8,4 +8,5 @@ public record GeneratePartPresignedCommand : ICommand<GeneratePartPresignedRespo
     public Guid FileId { get; init; }
     public string UploadId { get; init; }
     public int PartNumber { get; init; }
+    public string ContentType { get; init; }
 }
