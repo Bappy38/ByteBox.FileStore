@@ -27,7 +27,8 @@ public class ThumbnailGeneratedMessageHandler : IMessageHandler<ThumbnailGenerat
             {
                 FileId = message.FileId,
                 ThumbnailKey = message.ThumbnailKey,
-                ThumbnailPresignedUrl = message.ThumbnailPresignedUrl
+                ThumbnailPresignedUrl = message.ThumbnailPresignedUrl,
+                ThumbnailPresignedGeneratedAt = message.ThumbnailPresignedGeneratedAt
             };
             await _mediator.Send(refreshThumbnailCommand);
             _logger.LogInformation("ThumbnailGeneratedMessage processed successfully for file with ID: {FileId}", message.FileId);
