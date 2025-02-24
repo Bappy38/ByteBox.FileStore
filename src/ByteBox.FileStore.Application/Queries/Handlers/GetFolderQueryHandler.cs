@@ -25,7 +25,7 @@ public class GetFolderQueryHandler : IQueryHandler<GetFolderQuery, FolderDto>
             throw new Exception($"Folder not found");
         }
 
-        var folder = await _folderRepository.GetFolderByIdAsync(request.FolderId);
+        var folder = await _folderRepository.GetFolderDtoByIdAsync(request.FolderId);
         if (folder is null)
         {
             throw new Exception($"Folder not found");

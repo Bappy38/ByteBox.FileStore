@@ -20,7 +20,20 @@ public class FolderRepository : IFolderRepository
         await _dbContext.Folders.AddAsync(folder);
     }
 
-    public async Task<FolderDto?> GetFolderByIdAsync(Guid folderId)
+    public async Task UpdateAsync(Folder folder)
+    {
+        _dbContext.Folders.Update(folder);
+    }
+
+    public async Task<Folder?> GetFolderByIdAsync(Guid folderId)
+    {
+        return await _dbContext.Folders
+            .Include(f => f.Files)
+            .Include(f => f.SubFolders)
+            .FirstOrDefaultAsync(f => f.FolderId == folderId);
+    }
+
+    public async Task<FolderDto?> GetFolderDtoByIdAsync(Guid folderId)
     {
         return await _dbContext.Folders
             .AsNoTracking()

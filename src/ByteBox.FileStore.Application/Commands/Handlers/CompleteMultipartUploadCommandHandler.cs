@@ -8,9 +8,13 @@ using ByteBox.FileStore.Domain.Enums;
 using ByteBox.FileStore.Domain.Repositories;
 using ByteBox.FileStore.Domain.Utilities;
 using ByteBox.FileStore.Infrastructure.Data;
+using ByteBox.FileStore.Infrastructure.Messages;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NexaWrap.SQS.NET.Interfaces;
+using NexaWrap.SQS.NET.Models;
 using CompleteMultipartUploadResponse = ByteBox.FileStore.Application.Responses.CompleteMultipartUploadResponse;
+using File = ByteBox.FileStore.Domain.Entities.File;
 
 namespace ByteBox.FileStore.Application.Commands.Handlers;
 
@@ -24,6 +28,8 @@ public class CompleteMultipartUploadCommandHandler : ICommandHandler<CompleteMul
     private readonly IFileRepository _fileRepository;
     private readonly IFilePermissionRepository _filePermissionRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly SqsOptions _sqsOptions;
+    private readonly IMessageSender _messageSender;
     private ILogger<CompleteMultipartUploadCommandHandler> _logger;
 
     public CompleteMultipartUploadCommandHandler(
@@ -33,6 +39,8 @@ public class CompleteMultipartUploadCommandHandler : ICommandHandler<CompleteMul
         IFileRepository fileRepository,
         IFilePermissionRepository filePermissionRepository,
         IUnitOfWork unitOfWork,
+        IOptions<SqsOptions> sqsOptions,
+        IMessageSender messageSender,
         ILogger<CompleteMultipartUploadCommandHandler> logger)
     {
         _s3Client = s3Client;
@@ -41,6 +49,8 @@ public class CompleteMultipartUploadCommandHandler : ICommandHandler<CompleteMul
         _fileRepository = fileRepository;
         _filePermissionRepository = filePermissionRepository;
         _unitOfWork = unitOfWork;
+        _sqsOptions = sqsOptions.Value;
+        _messageSender = messageSender;
         _logger = logger;
     }
 
@@ -76,13 +86,15 @@ public class CompleteMultipartUploadCommandHandler : ICommandHandler<CompleteMul
 
             await _unitOfWork.SaveChangesAsync();
 
+            await SendFileUploadedMessageAsync(file);
+
             return new CompleteMultipartUploadResponse
             {
                 FileId = request.FileId,
                 FileName = file.FileName,
                 FileSizeInMb = file.FileSizeInMb,
                 FileType = file.FileType,
-                ThumbnailUrl = string.Empty // TODO:: Replace with default thumbnailUrl until real thumbnail generated
+                ThumbnailUrl = string.Empty
             };
         }
         catch (AmazonS3Exception ex)
@@ -121,5 +133,17 @@ public class CompleteMultipartUploadCommandHandler : ICommandHandler<CompleteMul
         };
 
         return await _s3Client.CompleteMultipartUploadAsync(completeUploadRequest, ct);
+    }
+
+    private async Task SendFileUploadedMessageAsync(File file)
+    {
+        var message = new FileUploadedMessage
+        {
+            FileId = file.FileId,
+            FileSizeInMb = file.FileSizeInMb,
+            FolderId = file.FolderId,
+            CorrelationId = Guid.NewGuid().ToString()
+        };
+        await _messageSender.SendMessageAsync(_sqsOptions.SubscribedQueueName, message);
     }
 }

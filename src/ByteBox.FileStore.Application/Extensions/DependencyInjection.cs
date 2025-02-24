@@ -42,6 +42,8 @@ public static class DependencyInjection
         services.ConfigureSqs(configuration, sqsBuilder =>
         {
             sqsBuilder.RegisterHandler<ThumbnailGeneratedMessage, ThumbnailGeneratedMessageHandler>();
+            sqsBuilder.RegisterHandler<RefreshFolderMessage, RefreshFolderMessageHandler>();
+            sqsBuilder.RegisterHandler<FileUploadedMessage, FileUploadedMessageHandler>();
         });
         return services;
     }
