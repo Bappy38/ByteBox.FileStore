@@ -44,4 +44,26 @@ public class FoldersController : ControllerBase
         var breadcrumbs = await _mediator.Send(query);
         return Ok(breadcrumbs);
     }
+
+    [HttpPatch("{folderId:guid}")]
+    public async Task<IActionResult> RenameFolder(Guid folderId, [FromBody] RenameFolderCommand command)
+    {
+        if (folderId != command.FolderId)
+        {
+            return BadRequest("Folder ID in path doesn't match with command");
+        }
+        await _mediator.Send(command);
+        return Ok();
+    }
+
+    [HttpDelete("{folderId:guid}")]
+    public async Task<IActionResult> DeleteFolder(Guid folderId)
+    {
+        var command = new DeleteFolderCommand
+        {
+            FolderId = folderId
+        };
+        await _mediator.Send(command);
+        return NoContent();
+    }
 }

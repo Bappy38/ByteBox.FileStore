@@ -13,4 +13,5 @@ public interface IFolderRepository
     Task<FolderPathDto?> GetFolderPathByIdAsync(Guid folderId);
     Task<List<FolderPathDto>> GetFoldersPathByIdsAsync(List<Guid> folderIds);
     Task<bool> IsUniqueFolderName(string folderName, Guid parentFolderId);
+    Task RemoveAsync(Folder folder);
 }

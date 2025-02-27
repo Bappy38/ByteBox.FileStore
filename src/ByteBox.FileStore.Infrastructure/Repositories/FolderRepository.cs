@@ -89,4 +89,9 @@ public class FolderRepository : IFolderRepository
     {
         return !await _dbContext.Folders.AnyAsync(f => f.ParentFolderId == parentFolderId && f.FolderName == folderName);
     }
+
+    public async Task RemoveAsync(Folder folder)
+    {
+        _dbContext.Folders.Remove(folder);
+    }
 }
