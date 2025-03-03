@@ -7,6 +7,7 @@
 - Create an app service
 - Go to Settings > Configuration and enable `SCM Basic Auth Publishing Credentials` and `FTP Basic Auth Publishing Credentials`. Then set `FTP State` as `All Allowed`
 - Download app service's publish profile and set it as repository secrets
+- Set `dotnet /home/site/wwwroot/ByteBox.FileStore.API.dll` as startup command
 - Implement deployment pipeline which will use this publish profile for deployment
 
 ```yml
