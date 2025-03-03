@@ -27,4 +27,4 @@ app.MapHealthChecks("/_health", new HealthCheckOptions
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
 
-app.Run("https://0.0.0.0:443");
+app.Run();
