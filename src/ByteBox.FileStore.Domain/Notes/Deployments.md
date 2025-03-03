@@ -5,6 +5,7 @@
 - Create an azure sql instance
 - Create an app service plan
 - Create an app service
+- Go to Settings > Configuration and enable `SCM Basic Auth Publishing Credentials` and `FTP Basic Auth Publishing Credentials`. Then set `FTP State` as `All Allowed`
 - Download app service's publish profile and set it as repository secrets
 - Implement deployment pipeline which will use this publish profile for deployment
 
