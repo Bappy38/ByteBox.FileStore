@@ -1,6 +1,4 @@
-﻿using ByteBox.FileStore.Application.BackgroundJobs;
-using ByteBox.FileStore.Application.MessageHandlers;
-using ByteBox.FileStore.Domain.BackgroundJobs;
+﻿using ByteBox.FileStore.Application.MessageHandlers;
 using ByteBox.FileStore.Infrastructure.Messages;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -23,16 +21,7 @@ public static class DependencyInjection
             .AddFluentValidationClientsideAdapters();
         services.AddValidatorsFromAssembly(applicationAssembly);
 
-        services.AddBackgroundJobs();
-
         services.AddMessageHandlers(configuration);
-
-        return services;
-    }
-
-    public static IServiceCollection AddBackgroundJobs(this IServiceCollection services)
-    {
-        services.AddScoped<IDeleteTrashFilesJob, DeleteTrashFilesJob>();
 
         return services;
     }

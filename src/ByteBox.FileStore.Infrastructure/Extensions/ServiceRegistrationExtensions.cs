@@ -5,7 +5,6 @@ using ByteBox.FileStore.Domain.Utilities;
 using ByteBox.FileStore.Infrastructure.Data;
 using ByteBox.FileStore.Infrastructure.Data.Interceptors;
 using ByteBox.FileStore.Infrastructure.Repositories;
-using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,8 +19,7 @@ public static class ServiceRegistrationExtensions
         services
             .AddDatabase(configuration)
             .AddRepositories()
-            .AddStorage(configuration)
-            .AddHangfire(configuration);
+            .AddStorage(configuration);
 
         return services;
     }
@@ -72,19 +70,6 @@ public static class ServiceRegistrationExtensions
 
             return new AmazonS3Client(s3Settings.AccessKey, s3Settings.SecretKey, config);
         });
-
-        return services;
-    }
-
-    private static IServiceCollection AddHangfire(this IServiceCollection services, IConfiguration configuration)
-    {
-        var connectionString = configuration.GetConnectionString("DefaultConnection");
-        var pollingInterval = configuration.GetValue<TimeSpan>("BackgroundJobs:PollingInterval");
-
-        services.AddHangfire(config =>
-            config.UseSqlServerStorage(connectionString));
-
-        services.AddHangfireServer(options => options.SchedulePollingInterval = pollingInterval);
 
         return services;
     }
