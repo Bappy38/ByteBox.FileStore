@@ -12,6 +12,7 @@ namespace ByteBox.FileStore.Application.BackgroundJobs;
 
 public class DeleteTrashFilesJob : BackgroundService
 {
+    private const int JobRecurringIntervalInMinutes = 5;
     private const int ExpiredInDays = 30;
     private const int BatchSize = 500;
 
@@ -28,7 +29,7 @@ public class DeleteTrashFilesJob : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             await DeleteTrashFilesAsync();
-            await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+            await Task.Delay(TimeSpan.FromMinutes(JobRecurringIntervalInMinutes), stoppingToken);
         }
     }
 
@@ -44,7 +45,7 @@ public class DeleteTrashFilesJob : BackgroundService
 
             try
             {
-                var lastExpiredDate = DateTime.UtcNow.AddDays(0);
+                var lastExpiredDate = DateTime.UtcNow.AddDays(-ExpiredInDays);
 
                 var trashedFiles = await dbContext.Files
                         .Where(f => f.TrashedAt <= lastExpiredDate)
