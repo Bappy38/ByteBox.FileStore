@@ -51,7 +51,7 @@ public class FolderRepository : IFolderRepository
                     FileType = file.FileType,
                     ThumbnailUrl = file.ThumbnailPresignedUrl
                 }).ToList(),
-                SubFolders = f.SubFolders.Select(sf => new SubFolderDto
+                SubFolders = f.SubFolders.Where(f => f.TrashedAt == null).Select(sf => new SubFolderDto
                 {
                     FolderId = sf.FolderId,
                     FolderName = sf.FolderName
@@ -87,6 +87,11 @@ public class FolderRepository : IFolderRepository
 
     public async Task<bool> IsUniqueFolderName(string folderName, Guid parentFolderId)
     {
-        return !await _dbContext.Folders.AnyAsync(f => f.ParentFolderId == parentFolderId && f.FolderName == folderName);
+        return !await _dbContext.Folders.AnyAsync(f => f.TrashedAt == null && f.ParentFolderId == parentFolderId && f.FolderName == folderName);
+    }
+
+    public async Task RemoveAsync(Folder folder)
+    {
+        _dbContext.Folders.Remove(folder);
     }
 }

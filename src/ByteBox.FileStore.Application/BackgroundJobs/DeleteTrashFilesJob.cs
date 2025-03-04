@@ -1,7 +1,8 @@
-﻿using ByteBox.FileStore.Domain.BackgroundJobs;
-using ByteBox.FileStore.Infrastructure.Data;
+﻿using ByteBox.FileStore.Infrastructure.Data;
 using ByteBox.FileStore.Infrastructure.Messages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NexaWrap.SQS.NET.Interfaces;
@@ -9,73 +10,74 @@ using NexaWrap.SQS.NET.Models;
 
 namespace ByteBox.FileStore.Application.BackgroundJobs;
 
-public class DeleteTrashFilesJob : IDeleteTrashFilesJob
+public class DeleteTrashFilesJob : BackgroundService
 {
+    private const int JobRecurringIntervalInMinutes = 5;
     private const int ExpiredInDays = 30;
     private const int BatchSize = 500;
 
-    private readonly ApplicationDbContext _dbContext;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly SqsOptions _sqsOptions;
-    private readonly IMessageSender _messageSender;
-    private readonly ILogger<DeleteTrashFilesJob> _logger;
+    private readonly IServiceProvider _serviceProvider;
 
     public DeleteTrashFilesJob(
-        ApplicationDbContext dbContext,
-        IUnitOfWork unitOfWork,
-        IOptions<SqsOptions> sqsOptions,
-        IMessageSender messageSender,
-        ILogger<DeleteTrashFilesJob> logger)
+        IServiceProvider serviceProvider)
     {
-        _dbContext = dbContext;
-        _unitOfWork = unitOfWork;
-        _sqsOptions = sqsOptions.Value;
-        _messageSender = messageSender;
-        _logger = logger;
+        _serviceProvider = serviceProvider;
     }
 
-    public async Task ExecuteAsync()
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        try
+        while (!stoppingToken.IsCancellationRequested)
         {
-            var lastExpiredDate = DateTime.UtcNow.AddDays(-ExpiredInDays);
+            await DeleteTrashFilesAsync();
+            await Task.Delay(TimeSpan.FromMinutes(JobRecurringIntervalInMinutes), stoppingToken);
+        }
+    }
 
-            var trashedFiles = await _dbContext.Files
-                    .Where(f => f.TrashedAt <= lastExpiredDate)
-                    .Take(BatchSize)
-                    .OrderBy(f => f.TrashedAt)
+    private async Task DeleteTrashFilesAsync()
+    {
+        using (var scope = _serviceProvider.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+            var sqsOptions = scope.ServiceProvider.GetRequiredService<IOptions<SqsOptions>>().Value;
+            var messageSender = scope.ServiceProvider.GetRequiredService<IMessageSender>();
+            var logger = scope.ServiceProvider.GetRequiredService<ILogger<DeleteTrashFilesJob>>();
+
+            try
+            {
+                var lastExpiredDate = DateTime.UtcNow.AddDays(-ExpiredInDays);
+
+                var trashedFiles = await dbContext.Files
+                        .Where(f => f.TrashedAt <= lastExpiredDate)
+                        .Take(BatchSize)
+                        .OrderBy(f => f.TrashedAt)
+                        .ToListAsync();
+
+                var trashedFilesId = trashedFiles.Select(f => f.FileId).ToList();
+
+                var filePermission = await dbContext.FilePermissions
+                    .Where(fp => trashedFilesId.Contains(fp.FileId))
                     .ToListAsync();
 
-            var trashedFilesId = trashedFiles.Select(f => f.FileId).ToList();
+                dbContext.FilePermissions.RemoveRange(filePermission);
+                dbContext.Files.RemoveRange(trashedFiles);
 
-            var filePermission = await _dbContext.FilePermissions
-                .Where(fp => trashedFilesId.Contains(fp.FileId))
-                .ToListAsync();
+                await unitOfWork.SaveChangesAsync();
 
-            _dbContext.FilePermissions.RemoveRange(filePermission);
-            _dbContext.Files.RemoveRange(trashedFiles);
-            
-            await _unitOfWork.SaveChangesAsync();
+                var folderIdsToRefresh = trashedFiles.Select(f => f.FolderId).Distinct().ToList();
+                var refreshFolderMessages = folderIdsToRefresh.Select(fileId => new RefreshFolderMessage
+                {
+                    FolderId = fileId,
+                    CorrelationId = Guid.NewGuid().ToString()
+                }).ToList();
+                await messageSender.SendMessagesAsync(sqsOptions.SubscribedQueueName, refreshFolderMessages);
 
-            var folderIdsToRefresh = trashedFiles.Select(f => f.FolderId).Distinct().ToList();
-            await SendRefreshFolderMessages(folderIdsToRefresh);
-
-            _logger.LogInformation("{DeletedFileCount} expired files deleted from trash", trashedFiles.Count);
+                logger.LogInformation("{DeletedFileCount} expired files deleted from trash", trashedFiles.Count);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while executing DeleteTrashFilesJob. Message: {ErrorMessage}", ex.Message);
+            }
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error occurred while executing DeleteTrashFilesJob. Message: {ErrorMessage}", ex.Message);
-            throw;
-        }
-    }
-
-    private async Task SendRefreshFolderMessages(List<Guid> folderIdsToRefresh)
-    {
-        var refreshFolderMessages = folderIdsToRefresh.Select(fileId => new RefreshFolderMessage
-        {
-            FolderId = fileId,
-            CorrelationId = Guid.NewGuid().ToString()
-        }).ToList();
-        await _messageSender.SendMessagesAsync(_sqsOptions.SubscribedQueueName, refreshFolderMessages);
     }
 }

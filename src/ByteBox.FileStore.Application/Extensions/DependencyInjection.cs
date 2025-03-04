@@ -1,4 +1,5 @@
-﻿using ByteBox.FileStore.Application.MessageHandlers;
+﻿using ByteBox.FileStore.Application.BackgroundJobs;
+using ByteBox.FileStore.Application.MessageHandlers;
 using ByteBox.FileStore.Infrastructure.Messages;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -23,6 +24,8 @@ public static class DependencyInjection
 
         services.AddMessageHandlers(configuration);
 
+        services.AddBackgroundJobs();
+
         return services;
     }
 
@@ -33,7 +36,14 @@ public static class DependencyInjection
             sqsBuilder.RegisterHandler<ThumbnailGeneratedMessage, ThumbnailGeneratedMessageHandler>();
             sqsBuilder.RegisterHandler<RefreshFolderMessage, RefreshFolderMessageHandler>();
             sqsBuilder.RegisterHandler<FileUploadedMessage, FileUploadedMessageHandler>();
+            sqsBuilder.RegisterHandler<FolderDeletedMessage, FolderDeletedMessageHandler>();
         });
+        return services;
+    }
+
+    private static IServiceCollection AddBackgroundJobs(this IServiceCollection services)
+    {
+        services.AddHostedService<DeleteTrashFilesJob>();
         return services;
     }
 }
