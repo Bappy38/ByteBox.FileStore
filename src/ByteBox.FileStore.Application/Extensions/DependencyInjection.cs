@@ -33,6 +33,7 @@ public static class DependencyInjection
             sqsBuilder.RegisterHandler<ThumbnailGeneratedMessage, ThumbnailGeneratedMessageHandler>();
             sqsBuilder.RegisterHandler<RefreshFolderMessage, RefreshFolderMessageHandler>();
             sqsBuilder.RegisterHandler<FileUploadedMessage, FileUploadedMessageHandler>();
+            sqsBuilder.RegisterHandler<FolderDeletedMessage, FolderDeletedMessageHandler>();
         });
         return services;
     }

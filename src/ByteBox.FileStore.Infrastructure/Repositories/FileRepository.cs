@@ -26,6 +26,13 @@ public class FileRepository : IFileRepository
             .FirstOrDefaultAsync(f => f.FileId == id);
     }
 
+    public async Task<List<File>> GetFilesInsideFolderAsync(Guid folderId)
+    {
+        return await _dbContext.Files
+            .Where(f => f.TrashedAt == null && f.FolderId == folderId)
+            .ToListAsync();
+    }
+
     public async Task<File?> GetTrashedFileByIdAsync(Guid id)
     {
         return await _dbContext.Files

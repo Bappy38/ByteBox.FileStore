@@ -51,7 +51,7 @@ public class FolderRepository : IFolderRepository
                     FileType = file.FileType,
                     ThumbnailUrl = file.ThumbnailPresignedUrl
                 }).ToList(),
-                SubFolders = f.SubFolders.Select(sf => new SubFolderDto
+                SubFolders = f.SubFolders.Where(f => f.TrashedAt == null).Select(sf => new SubFolderDto
                 {
                     FolderId = sf.FolderId,
                     FolderName = sf.FolderName

@@ -6,6 +6,7 @@ public interface IFileRepository
 {
     Task AddAsync(File file);
     Task<File?> GetByIdAsync(Guid id);
+    Task<List<File>> GetFilesInsideFolderAsync(Guid folderId);
     Task<File?> GetTrashedFileByIdAsync(Guid id);
     Task UpdateAsync(File file);
     Task RemoveAsync(File file);
