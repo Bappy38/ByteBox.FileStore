@@ -32,7 +32,7 @@ ByteBox is a cloud storage solution similar to Google Drive, designed to handle 
 - **AWS Lambda**: Handles asynchronous tasks such as thumbnail generation.
 - **AWS SQS**: Acts as a message broker for asynchronous communication between services. The custom **NexaWrap.SQS** library simplifies integration and usage.
 - **Background Services**: Implemented using **Hangfire** to handle periodic tasks like URL refresh and file deletion.
-- **Future Deployment**: The application will be deployed to **AWS ECS (Elastic Container Service)** for containerized and scalable deployment.
+- **Deployment**: Integrated `Azure SQL` and deployed to `Azure App Service` using `CI/CD` pipeline. Will try to deploy in `AWS ECS` also.
 
 --- 
 
