@@ -87,7 +87,7 @@ public class FolderRepository : IFolderRepository
 
     public async Task<bool> IsUniqueFolderName(string folderName, Guid parentFolderId)
     {
-        return !await _dbContext.Folders.AnyAsync(f => f.ParentFolderId == parentFolderId && f.FolderName == folderName);
+        return !await _dbContext.Folders.AnyAsync(f => f.TrashedAt == null && f.ParentFolderId == parentFolderId && f.FolderName == folderName);
     }
 
     public async Task RemoveAsync(Folder folder)
