@@ -44,6 +44,7 @@ public static class DependencyInjection
     private static IServiceCollection AddBackgroundJobs(this IServiceCollection services)
     {
         services.AddHostedService<DeleteTrashFilesJob>();
+        services.AddHostedService<RefreshThumbnailPresignedJob>();
         return services;
     }
 }
