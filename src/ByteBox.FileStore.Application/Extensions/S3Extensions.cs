@@ -17,7 +17,7 @@ public static class S3Extensions
         return $"resources/{actualFileType}/{Default.User.UserId}/{fileId}";
     }
 
-    public static string GetThumbnailLocation(this File file)
+    public static string GenerateThumbnailKey(this File file)
     {
         var actualFileType = FileMimeTypes.GetActualFileType(file.FileType);
 
