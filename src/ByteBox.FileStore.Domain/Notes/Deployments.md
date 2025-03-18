@@ -47,3 +47,18 @@ jobs:
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
 
 ```
+
+# AWS Deployment
+
+- Add Dockerfile in the project
+- Go to `ECR` and create a repository
+- Install AWS CLI
+- Authenticate your docker client to your registry by the command given in ECR repository
+- Go to the root folder of the project. For this project it is `ByteBox.FileStore` folder
+- Build the docker image by the command `docker build -t bytebox-filestore . -f src/ByteBox.FileStore.API/Dockerfile` from the root folder
+- Tag the image by the command `docker tag bytebox-filestore:latest <aws-account-id>.dkr.ecr.<region>.amazonaws.com/bytebox-filestore:latest`
+- Push the image by the command `docker push <aws-account-id>.dkr.ecr.<region>.amazonaws.com/bytebox-filestore:latest`
+- Go to `ECS` and create a cluster with name `ByteBoxFileStoreCluster` and keep rest of the things as default
+- Now create a task definition with name `ByteBoxFileStoreTaskDef`. Map port as per you mentioned in Dockerfile. And add all the environment variables.
+- Go to your created Cluster again. And run the task definition you created.
+- Go to `Networking` tab of your task. Go to security group. And add a new inbound rule with port you mentioned in Dockerfile so that your public IP can be accessed from anywhere.
